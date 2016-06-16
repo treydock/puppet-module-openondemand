@@ -1,0 +1,14 @@
+fixtures:
+  repositories:
+    stdlib:
+      repo: https://github.com/puppetlabs/puppetlabs-stdlib.git
+    concat:
+      repo: https://github.com/puppetlabs/puppetlabs-concat.git
+    apache:
+      repo: https://github.com/puppetlabs/puppetlabs-apache.git
+      ref: 1.10.0
+    nginx:
+      repo: https://github.com/jfryman/puppet-nginx.git
+      ref: v0.3.0
+  symlinks:
+    openondemand: "#{source_dir}"

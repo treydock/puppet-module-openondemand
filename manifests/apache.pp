@@ -1,0 +1,71 @@
+# Private class.
+class openondemand::apache {
+  if $caller_module_name != $module_name {
+    fail("Use of private class ${name} by ${caller_module_name}")
+  }
+
+  if $openondemand::declare_apache {
+    class { '::apache':
+      default_vhost  => false,
+      apache_name    => 'httpd24',
+      dev_packages   => ['httpd24-httpd-devel', 'httpd24-apr-devel'],
+      service_name   => 'httpd24-httpd',
+      apache_version => '2.4',
+      httpd_dir      => '/opt/rh/httpd24/root/etc/httpd',
+      server_root    => '/opt/rh/httpd24/root/etc/httpd',
+      conf_dir       => '/opt/rh/httpd24/root/etc/httpd/conf',
+      confd_dir      => '/opt/rh/httpd24/root/etc/httpd/conf.d',
+      vhost_dir      => '/opt/rh/httpd24/root/etc/httpd/conf.d',
+      mod_dir        => '/opt/rh/httpd24/root/etc/httpd/conf.modules.d',
+      ports_file     => '/opt/rh/httpd24/root/etc/httpd/conf/ports.conf',
+      logroot        => '/var/log/httpd24',
+    }
+    class { '::apache::mod::ssl':
+      package_name => 'httpd24-mod_ssl',
+    }
+    class { '::apache::mod::php':
+      package_name => 'rh-php56-php',
+      template     => 'openondemand/apache/rh-php56-php.conf.erb',
+      path         => 'modules/librh-php56-php5.so',
+    }
+    class { '::apache::mod::passenger':
+      mod_package => 'rh-passenger40-mod_passenger',
+    }
+  } else {
+    include ::apache
+    include ::apache::mod::ssl
+    include ::apache::mod::php
+    include ::apache::mod::passenger
+  }
+
+  ::apache::mod { 'session':
+    package => 'httpd24-mod_session',
+    #loadfile_name => '01-session.conf',
+  }
+  ::apache::mod { 'session_cookie':
+    package => 'httpd24-mod_session',
+    #loadfile_name => '01-session-cookie.conf',
+  }
+  ::apache::mod { 'session_dbd':
+    package => 'httpd24-mod_session',
+    #loadfile_name => '01-session-dbd.conf',
+  }
+  ::apache::mod { 'auth_form':
+    package => 'httpd24-mod_session',
+    #loadfile_name => '01-auth_form.conf',
+  }
+  # xml2enc and proxy_html work around apache::mod::proxy_html lack of package name parameter
+  ::apache::mod { 'xml2enc':}
+  ::apache::mod { 'proxy_html':
+    package => 'httpd24-mod_proxy_html',
+    #loadfile_name => '00-proxyhtml.conf',
+  }
+  # define resources normally done by apache::mod::authnz_ldap and apache::mod::ldap
+  ::apache::mod { 'ldap':
+    package => 'httpd24-mod_ldap',
+  }
+  ::apache::mod { 'authnz_ldap':
+    package => 'httpd24-mod_ldap',
+  }
+  ::apache::mod { 'lua': }
+}

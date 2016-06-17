@@ -5,6 +5,33 @@ class openondemand (
   # Apache
   $declare_apache       = true,
 
+  #
+  $ood_ssl                = true,
+  $ood_ssl_redirect       = true,
+  $ood_ip                 = $::ipaddress,
+  $ood_port               = '443',
+  $ood_server_name        = $::fqdn,
+  $ood_public_root        = '/var/www/ood/public',
+  $ood_public_uri         = '/public',
+  $ood_user_map_cmd       = '/opt/ood/ood_auth_map/bin/ood_auth_map',
+  $ood_pun_stage_cmd      = 'sudo /opt/ood/nginx_stage/sbin/nginx_stage',
+  $ood_map_fail_uri       = '/register',
+  $ood_lua_root           = '/opt/ood/mod_ood_proxy/lib',
+  $ood_node_uri           = '/node',
+  $ood_rnode_uri          = '/rnode',
+  $ood_auth_type          = 'openid-connect',
+  $ood_pun_uri            = '/pun',
+  $ood_pun_socket_root    = '/var/run/nginx',
+  $ood_pun_max_retries    = '5',
+  $ood_nginx_uri          = '/nginx',
+  $ood_root_uri           = '/pun/sys/dashboard',
+  $ood_auth_setup         = true,
+  $ood_auth_oidc_uri      = '/oidc',
+  $ood_auth_discover_uri  = '/discover',
+  $ood_auth_discover_root = '/var/www/ood/discover',
+  $ood_auth_register_uri  = '/register',
+  $ood_auth_register_root = '/var/www/ood/register',
+
   # nginx
   $declare_nginx        = true,
 

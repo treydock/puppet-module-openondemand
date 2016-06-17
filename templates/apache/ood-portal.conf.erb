@@ -1,0 +1,191 @@
+<%- use_virtual_host = !@ood_ip.empty? && !@ood_server_name.empty? -%>
+#
+# Open OnDemand Portal
+#
+
+<%- if use_virtual_host -%>
+<%- if @ood_ssl && @ood_ssl_redirect -%>
+# Redirect http => https
+#
+Listen <%= "#{@ood_ip}:80" %>
+<VirtualHost "<%= "#{@ood_ip}:80" %>">
+  ServerName "<%= @ood_server_name %>"
+  Redirect permanent / https://<%= @ood_server_name %><%= ":#{@ood_port}" if @ood_port != '443' %>/
+</VirtualHost>
+<%- end -%>
+
+# Listen on specified ip and port
+#
+Listen <%= "#{@ood_ip}:#{@ood_port}" %><%= ' https' if @ood_ssl %>
+
+# Generate OOD Portal VirutalHost
+#
+<VirtualHost "<%= "#{@ood_ip}:#{@ood_port}" %>">
+
+  # Name that the server uses to identify itself
+  #
+  ServerName "<%= @ood_server_name %>"
+
+  <%- if @ood_ssl %>
+  # Enable SSL support
+  #
+  SSLEngine On
+  <%- end -%>
+<%- end -%>
+
+  <%- unless @ood_lua_root.empty? -%>
+  # Location of OOD Lua scripts
+  #
+  LuaRoot "<%= @ood_lua_root %>"
+  <%- end %>
+
+  # Command used to map authenticated user to system user
+  #
+  SetEnv OOD_USER_MAP_CMD "<%= @ood_user_map_cmd %>"
+
+  # Command used to stage & control PUNs (runs as sudo)
+  #
+  SetEnv OOD_PUN_STAGE_CMD "<%= @ood_pun_stage_cmd %>"
+
+  <%- unless @ood_map_fail_uri.empty? -%>
+  # Redirect user to this URI if fail to map to system user
+  SetEnv OOD_MAP_FAIL_URI "<%= @ood_map_fail_uri %>"
+  <%- end %>
+
+  <%- unless @ood_public_uri.empty? -%>
+  # Serve up publicly available assets from local file system:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_public_uri %>/assets/images/osc-logo.png
+  #    #=> <%= @ood_public_root %>/assets/images/osc-logo.png
+  #
+  Alias "<%= @ood_public_uri %>" "<%= @ood_public_root %>"
+  <Directory "<%= @ood_public_root %>">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+  </Directory>
+  <%- end %>
+
+  <%- unless @ood_node_uri.empty? -%>
+  # Reverse proxy traffic to backend webserver through IP sockets:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_node_uri %>/HOST/PORT/index.html
+  #    #=> http://HOST:PORT<%= @ood_node_uri %>/HOST/PORT/index.html
+  #
+  #    wss://<%= @ood_server_name %><%= @ood_node_uri %>/HOST/PORT/socket.io
+  #    #=> ws://HOST:PORT<%= @ood_node_uri %>/HOST/PORT/socket.io
+  #
+  <Location "<%= @ood_node_uri %>">
+    AuthType "<%= @ood_auth_type %>"
+    Require valid-user
+
+    SetEnv OOD_NODE_URI "<%= @ood_node_uri %>"
+    LuaHookFixups node_proxy.lua node_proxy_handler
+  </Location>
+  <%- end -%>
+
+  <%- unless @ood_rnode_uri.empty? -%>
+  # Reverse "relative" proxy traffic to backend webserver through IP sockets:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_rnode_uri %>/HOST/PORT/index.html
+  #    #=> http://HOST:PORT/index.html
+  #
+  #    wss://<%= @ood_server_name %><%= @ood_rnode_uri %>/HOST/PORT/socket.io
+  #    #=> ws://HOST:PORT/socket.io
+  #
+  <Location "<%= @ood_rnode_uri %>">
+    AuthType "<%= @ood_auth_type %>"
+    Require valid-user
+
+    SetEnv OOD_IS_RELATIVE "true"
+    SetEnv OOD_NODE_URI "<%= @ood_rnode_uri %>"
+    LuaHookFixups node_proxy.lua node_proxy_handler
+  </Location>
+  <%- end -%>
+
+  <%- unless @ood_pun_uri.empty? -%>
+  # Reverse proxy traffic to backend PUNs through Unix domain sockets:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_pun_uri %>/dev/app/simulations/1
+  #    #=> unix:/path/to/socket|http://localhost<%= @ood_pun_uri %>/dev/app/simulations/1
+  #
+  #    wss://<%= @ood_server_name %><%= @ood_pun_uri %>/shared/bob/app/socket
+  #    #=> unix:/path/to/socket|ws://localhost<%= @ood_pun_uri %>/shared/bob/app/socket
+  #
+  SetEnv OOD_PUN_URI "<%= @ood_pun_uri %>"
+  <Location "<%= @ood_pun_uri %>">
+    AuthType "<%= @ood_auth_type %>"
+    Require valid-user
+
+    SetEnv OOD_PUN_SOCKET_ROOT "<%= @ood_pun_socket_root %>"
+    SetEnv OOD_PUN_MAX_RETRIES "<%= @ood_pun_max_retries %>"
+    LuaHookFixups pun_proxy.lua pun_proxy_handler
+  </Location>
+  <%- end -%>
+
+  <%- unless @ood_nginx_uri.empty? -%>
+  # Control backend PUN for authenticated user:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_nginx_uri %>/stop
+  #    #=> stops the authenticated user's PUN
+  #
+  # See mod_ood_proxy for more details.
+  #
+  SetEnv OOD_NGINX_URI "<%= @ood_nginx_uri %>"
+  <Location "<%= @ood_nginx_uri %>">
+    AuthType "<%= @ood_auth_type %>"
+    Require valid-user
+
+    LuaHookFixups nginx.lua nginx_handler
+  </Location>
+  <%- end -%>
+
+  <%- unless @ood_root_uri.empty? %>
+  # Redirect root URI to specified URI
+  #
+  #    https://<%= @ood_server_name %>/
+  #    #=> https://<%= @ood_server_name %><%= @ood_root_uri %>
+  #
+  RedirectMatch ^/$ "<%= @ood_root_uri %>"
+  <%- end -%>
+
+  <%- if @ood_auth_setup -%>
+  # OpenID Connect redirect URI:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_auth_oidc_uri %>
+  #    #=> handled by mod_auth_openidc
+  #
+  <Location "<%= @ood_auth_oidc_uri %>">
+    AuthType "<%= @ood_auth_type %>"
+    Require valid-user
+  </Location>
+
+  # Discover URI for OpenID Connect (used for multiple Id Providers):
+  #
+  #    https://<%= @ood_server_name %><%= @ood_auth_discover_uri %>
+  #    #=> <%= @ood_auth_discover_root %>/
+  #
+  Alias "<%= @ood_auth_discover_uri %>" "<%= @ood_auth_discover_root %>"
+  <Directory "<%= @ood_auth_discover_root %>">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+  </Directory>
+
+  # Register unmapped user to grid-mapfile here:
+  #
+  #    https://<%= @ood_server_name %><%= @ood_auth_register_uri %>
+  #    #=> <%= @ood_auth_register_root %>/
+  #
+  Alias "<%= @ood_auth_register_uri %>" "<%= @ood_auth_register_root %>"
+  <Directory "<%= @ood_auth_register_root %>">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    AuthType "<%= @ood_auth_type %>"
+    Require valid-user
+  </Directory>
+  <%- end -%>
+
+<%- if use_virtual_host -%>
+</VirtualHost>
+<%- end %>

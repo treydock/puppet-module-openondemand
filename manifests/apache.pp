@@ -68,4 +68,10 @@ class openondemand::apache {
     package => 'httpd24-mod_ldap',
   }
   ::apache::mod { 'lua': }
+
+  ::apache::vhost::custom { 'ood-portal':
+    content  => template('openondemand/apache/ood-portal.conf.erb'),
+    priority => '10',
+  }
+
 }

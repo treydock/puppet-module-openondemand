@@ -54,6 +54,8 @@ class openondemand::apache {
     package => 'httpd24-mod_session',
     #loadfile_name => '01-auth_form.conf',
   }
+  # mod_request needed by mod_auth_form - should probably be a default module.
+  ::apache::mod { 'request': }
   # xml2enc and proxy_html work around apache::mod::proxy_html lack of package name parameter
   ::apache::mod { 'xml2enc':}
   ::apache::mod { 'proxy_html':
@@ -69,9 +71,10 @@ class openondemand::apache {
   }
   ::apache::mod { 'lua': }
 
-  ::apache::vhost::custom { 'ood-portal':
-    content  => template('openondemand/apache/ood-portal.conf.erb'),
-    priority => '10',
+  ::apache::custom_config { 'ood-portal':
+    content        => template('openondemand/apache/ood-portal.conf.erb'),
+    priority       => '10',
+    verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
   }
 
 }

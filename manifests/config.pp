@@ -4,4 +4,8 @@ class openondemand::config {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
+  sudo::conf { 'ood':
+    content => template('openondemand/sudo.erb')
+  }
+
 }

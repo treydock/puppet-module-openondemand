@@ -1,0 +1,5 @@
+Defaults:apache !requiretty, !authenticate
+apache ALL=(ALL) NOPASSWD: /opt/ood/nginx_stage/sbin/nginx_stage
+apache ALL=(ALL) NOPASSWD: /usr/local/bin/add-user-dn.real, \
+                           /usr/local/bin/delete-user-dn.real, \
+                           /usr/local/bin/list-user-dn.real

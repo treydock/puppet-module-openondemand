@@ -88,6 +88,18 @@ class openondemand::apache {
     before => Apache::Custom_config['auth_openidc'],
   }
 
+  file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.client':
+    ensure  => 'file',
+    content => template('openondemand/apache/cilogon.org.client.erb')
+  }
+  file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.conf':
+    ensure  => 'file',
+    content => template('openondemand/apache/cilogon.org.conf.erb')
+  }  file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.provider':
+    ensure  => 'file',
+    content => template('openondemand/apache/cilogon.org.provider.erb')
+  }
+
   ::apache::custom_config { 'auth_openidc':
     content        => template('openondemand/apache/auth_openidc.conf.erb'),
     priority       => false,

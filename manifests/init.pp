@@ -8,6 +8,9 @@ class openondemand (
   $ssl_certificate_file     = '/etc/pki/tls/certs/localhost.crt',
   $ssl_certificate_key_file = '/etc/pki/tls/private/localhost.key',
 
+  $cilogon_client_id      = '',
+  $cilogon_client_secret  = '',
+
   #
   $ood_ssl                          = true,
   $ood_ssl_redirect                 = true,

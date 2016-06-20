@@ -33,6 +33,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
   SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
   <%- end -%>
+
+  ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log
+  CustomLog logs/<%= scope['openondemand::ood_server_name'] %>_access.log combined
 <%- end -%>
 
   <%- unless scope['openondemand::ood_lua_root'].empty? -%>

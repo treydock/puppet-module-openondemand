@@ -71,9 +71,26 @@ class openondemand::apache {
   }
   ::apache::mod { 'lua': }
 
+  # TODO: How to handle installing this module?
+  ::apache::mod { 'auth_openidc': }
+
   ::apache::custom_config { 'ood-portal':
     content        => template('openondemand/apache/ood-portal.conf.erb'),
     priority       => '10',
+    verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
+  }
+
+  file { '/opt/rh/httpd24/root/etc/httpd/metadata':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'apache',
+    mode   => '0750',
+    before => Apache::Custom_config['auth_openidc'],
+  }
+
+  ::apache::custom_config { 'auth_openidc':
+    content        => template('openondemand/apache/auth_openidc.conf.erb'),
+    priority       => false,
     verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
   }
 

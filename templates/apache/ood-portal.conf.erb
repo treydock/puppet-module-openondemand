@@ -30,6 +30,8 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   # Enable SSL support
   #
   SSLEngine On
+  SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
+  SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
   <%- end -%>
 <%- end -%>
 

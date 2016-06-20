@@ -54,12 +54,14 @@ class openondemand (
 
   include openondemand::install
   include openondemand::apache
+  #include openondemand::nginx
   include openondemand::config
   include openondemand::service
 
   anchor { 'openondemand::start': }->
   Class['openondemand::install']->
   Class['openondemand::apache']->
+  #Class['openondemand::nginx']->
   Class['openondemand::config']~>
   Class['openondemand::service']->
   anchor { 'openondemand::end': }

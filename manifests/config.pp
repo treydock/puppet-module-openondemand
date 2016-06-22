@@ -25,4 +25,12 @@ class openondemand::config {
     content => template('openondemand/sudo.erb')
   }
 
+  file { '/etc/cron.d/ood':
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    content => template('openondemand/ood-cron.erb'),
+  }
+
 }

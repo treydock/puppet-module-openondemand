@@ -1,0 +1,3 @@
+#!/bin/bash
+
+0 */2 * * * [ -f <%= scope['openondemand::ood_pun_stage_cmd'] %> ] && <%= scope['openondemand::ood_pun_stage_cmd'] %> nginx_clean

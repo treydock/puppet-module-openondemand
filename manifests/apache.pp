@@ -28,14 +28,14 @@ class openondemand::apache {
       template     => 'openondemand/apache/rh-php56-php.conf.erb',
       path         => 'modules/librh-php56-php5.so',
     }
-    class { '::apache::mod::passenger':
-      mod_package => 'rh-passenger40-mod_passenger',
-    }
+    #class { '::apache::mod::passenger':
+    #  mod_package => 'rh-passenger40-mod_passenger',
+    #}
   } else {
     include ::apache
     include ::apache::mod::ssl
     include ::apache::mod::php
-    include ::apache::mod::passenger
+    #include ::apache::mod::passenger
   }
 
   ::apache::mod { 'session':
@@ -62,6 +62,12 @@ class openondemand::apache {
     package => 'httpd24-mod_proxy_html',
     #loadfile_name => '00-proxyhtml.conf',
   }
+  include ::apache::mod::proxy
+  include ::apache::mod::proxy_http
+  include ::apache::mod::proxy_connect
+  # proxy_wstunnel not yet released
+  #include ::apache::mod::proxy_wstunnel
+  ::apache::mod { 'proxy_wstunnel': }
   # define resources normally done by apache::mod::authnz_ldap and apache::mod::ldap
   ::apache::mod { 'ldap':
     package => 'httpd24-mod_ldap',
@@ -104,6 +110,10 @@ class openondemand::apache {
     content        => template('openondemand/apache/auth_openidc.conf.erb'),
     priority       => false,
     verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
+  }
+  # Hack to set mode of auth_openidc.conf
+  File <| title == 'apache_auth_openidc' |> {
+    mode => '0600',
   }
 
 }

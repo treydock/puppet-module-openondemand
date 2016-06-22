@@ -30,6 +30,7 @@ class openondemand::params {
           'rh-php56-php-pear',
           'rh-php56-php-ldap',
           'nodejs010',
+          'nginx16',
         ]
       } else {
         fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 for osfamily RedHat")

@@ -113,7 +113,9 @@ class openondemand::apache {
   }
   # Hack to set mode of auth_openidc.conf
   File <| title == 'apache_auth_openidc' |> {
-    mode => '0600',
+    owner => 'root',
+    group => 'apache',
+    mode  => '0640',
   }
 
 }

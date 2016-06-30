@@ -29,7 +29,7 @@ class openondemand::config {
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
-    mode    => '0755',
+    mode    => '0644',
     content => template('openondemand/ood-cron.erb'),
   }
 

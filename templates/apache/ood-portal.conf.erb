@@ -50,7 +50,7 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
 
   # Command used to stage & control PUNs (runs as sudo)
   #
-  SetEnv OOD_PUN_STAGE_CMD "<%= scope['openondemand::ood_pun_stage_cmd'] %>"
+  SetEnv OOD_PUN_STAGE_CMD "<%= scope['openondemand::_ood_pun_stage_cmd_full'] %>"
 
   <%- unless scope['openondemand::ood_map_fail_uri'].empty? -%>
   # Redirect user to this URI if fail to map to system user

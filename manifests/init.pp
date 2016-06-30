@@ -20,7 +20,8 @@ class openondemand (
   $ood_public_root                  = '/var/www/ood/public',
   $ood_public_uri                   = '/public',
   $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
-  $ood_pun_stage_cmd                = 'sudo /opt/ood/nginx_stage/sbin/nginx_stage',
+  $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',
+  $ood_pun_stage_cmd_sudo           = true,
   $ood_map_fail_uri                 = '/register',
   $ood_lua_root                     = '/opt/ood/mod_ood_proxy/lib',
   $ood_node_uri                     = '/node',
@@ -51,6 +52,12 @@ class openondemand (
   $service_hasrestart   = $openondemand::params::service_hasrestart,
   $config_path          = $openondemand::params::config_path
 ) inherits openondemand::params {
+
+  if $ood_pun_stage_cmd_sudo {
+    $_ood_pun_stage_cmd_full = "sudo ${ood_pun_stage_cmd}"
+  } else {
+    $_ood_pun_stage_cmd_full = $ood_pun_stage_cmd
+  }
 
   include openondemand::install
   include openondemand::apache

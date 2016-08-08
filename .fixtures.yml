@@ -4,6 +4,8 @@ fixtures:
       repo: https://github.com/puppetlabs/puppetlabs-stdlib.git
     concat:
       repo: https://github.com/puppetlabs/puppetlabs-concat.git
+    vcsrepo:
+      repo: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
     apache:
       repo: https://github.com/puppetlabs/puppetlabs-apache.git
       ref: 1.10.0

@@ -1,6 +1,17 @@
 # See README.md for more details.
 class openondemand (
-  $scl_packages         = $openondemand::params::scl_packages,
+  $scl_packages                   = $openondemand::params::scl_packages,
+  $packages_ensure                = 'present',
+  $mod_ood_proxy_ensure           = undef,
+  $mod_ood_proxy_revision         = 'master',
+  $nginx_stage_ensure             = undef,
+  $nginx_stage_revision           = 'master',
+  $ood_auth_map_ensure            = undef,
+  $ood_auth_map_revision          = 'master',
+  $ood_auth_discovery_ensure      = undef,
+  $ood_auth_discovery_revision    = 'master',
+  $ood_auth_registration_ensure   = undef,
+  $ood_auth_registration_revision = 'master',
 
   # Apache
   $declare_apache       = true,
@@ -58,6 +69,12 @@ class openondemand (
   } else {
     $_ood_pun_stage_cmd_full = $ood_pun_stage_cmd
   }
+
+  $_mod_ood_proxy_ensure          = pick($mod_ood_proxy_ensure, $packages_ensure)
+  $_nginx_stage_ensure            = pick($nginx_stage_ensure, $packages_ensure)
+  $_ood_auth_map_ensure           = pick($ood_auth_map_ensure, $packages_ensure)
+  $_ood_auth_discovery_ensure     = pick($ood_auth_discovery_ensure, $packages_ensure)
+  $_ood_auth_registration_ensure  = pick($ood_auth_registration_ensure, $packages_ensure)
 
   include openondemand::install
   include openondemand::apache

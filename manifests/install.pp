@@ -6,4 +6,50 @@ class openondemand::install {
 
   ensure_packages($openondemand::scl_packages)
 
+  $_ood_web_directory = dirname($openondemand::ood_public_root)
+  if ! defined(File[$_ood_web_directory]) {
+    file { $_ood_web_directory:
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+  }
+
+  file { '/opt/ood':
+    ensure => 'directory',
+  }
+  file { '/opt/ood/src':
+    ensure => 'directory',
+  }
+
+  openondemand::install::component { 'mod_ood_proxy':
+    ensure   => $openondemand::_mod_ood_proxy_ensure,
+    revision => $openondemand::mod_ood_proxy_revision,
+  }
+
+  openondemand::install::component { 'nginx_stage':
+    ensure   => $openondemand::_nginx_stage_ensure,
+    revision => $openondemand::nginx_stage_revision,
+  }
+
+  openondemand::install::component { 'ood_auth_map':
+    ensure   => $openondemand::_ood_auth_map_ensure,
+    revision => $openondemand::ood_auth_map_revision,
+  }
+
+  openondemand::install::component { 'ood_auth_discovery':
+    ensure         => $openondemand::_ood_auth_discovery_ensure,
+    path           => $openondemand::ood_auth_discover_root,
+    revision       => $openondemand::ood_auth_discovery_revision,
+    install_method => 'none',
+  }
+
+  openondemand::install::component { 'ood_auth_registration':
+    ensure         => $openondemand::_ood_auth_registration_ensure,
+    path           => $openondemand::ood_auth_register_root,
+    revision       => $openondemand::ood_auth_registration_revision,
+    install_method => 'none',
+  }
+
 }

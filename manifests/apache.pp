@@ -101,7 +101,8 @@ class openondemand::apache {
   file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.conf':
     ensure  => 'file',
     content => template('openondemand/apache/cilogon.org.conf.erb')
-  }  file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.provider':
+  }
+  file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.provider':
     ensure  => 'file',
     content => template('openondemand/apache/cilogon.org.provider.erb')
   }

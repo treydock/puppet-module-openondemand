@@ -88,7 +88,7 @@ class openondemand (
   Class['openondemand::install']->
   Class['openondemand::apache']->
   #Class['openondemand::nginx']->
-  Class['openondemand::config']~>
+  Class['openondemand::config']->
   Class['openondemand::service']->
   anchor { 'openondemand::end': }
 

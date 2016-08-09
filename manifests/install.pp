@@ -6,9 +6,8 @@ class openondemand::install {
 
   ensure_packages($openondemand::scl_packages)
 
-  $_ood_web_directory = dirname($openondemand::ood_public_root)
-  if ! defined(File[$_ood_web_directory]) {
-    file { $_ood_web_directory:
+  if ! defined(File[$openondemand::_ood_web_directory]) {
+    file { $openondemand::_ood_web_directory:
       ensure => 'directory',
       owner  => 'root',
       group  => 'root',

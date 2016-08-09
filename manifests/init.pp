@@ -70,6 +70,8 @@ class openondemand (
     $_ood_pun_stage_cmd_full = $ood_pun_stage_cmd
   }
 
+  $_ood_web_directory = dirname($ood_public_root)
+
   $_mod_ood_proxy_ensure          = pick($mod_ood_proxy_ensure, $packages_ensure)
   $_nginx_stage_ensure            = pick($nginx_stage_ensure, $packages_ensure)
   $_ood_auth_map_ensure           = pick($ood_auth_map_ensure, $packages_ensure)

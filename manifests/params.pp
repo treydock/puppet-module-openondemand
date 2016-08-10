@@ -33,7 +33,7 @@ class openondemand::params {
           'nginx16',
         ]
       } else {
-        fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 for osfamily RedHat")
+        fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 for osfamily RedHat") # lint:ignore:140chars
       }
     }
 

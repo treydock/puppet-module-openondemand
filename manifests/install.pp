@@ -6,6 +6,17 @@ class openondemand::install {
 
   ensure_packages($openondemand::scl_packages)
 
+  # Assumes /var/www - must create since httpd24 does not
+  $_web_directory_parent = dirname($openondemand::_ood_web_directory)
+  if ! defined(File[$_web_directory_parent]) {
+    file { $_web_directory_parent:
+      ensure => 'directory',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+    }
+  }
+
   if ! defined(File[$openondemand::_ood_web_directory]) {
     file { $openondemand::_ood_web_directory:
       ensure => 'directory',

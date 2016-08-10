@@ -9,9 +9,6 @@ fixtures:
     apache:
       repo: https://github.com/puppetlabs/puppetlabs-apache.git
       ref: 1.10.0
-    nginx:
-      repo: https://github.com/jfryman/puppet-nginx.git
-      ref: v0.3.0
     sudo:
       repo: https://github.com/saz/puppet-sudo.git
   symlinks:

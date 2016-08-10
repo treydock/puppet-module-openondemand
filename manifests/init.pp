@@ -50,18 +50,6 @@ class openondemand (
   $ood_auth_discover_root           = '/var/www/ood/discover',
   $ood_auth_register_uri            = '/register',
   $ood_auth_register_root           = '/var/www/ood/register',
-
-  # nginx
-  $declare_nginx        = true,
-
-  $package_ensure       = 'present',
-  $package_name         = $openondemand::params::package_name,
-  $service_name         = $openondemand::params::service_name,
-  $service_ensure       = 'running',
-  $service_enable       = true,
-  $service_hasstatus    = $openondemand::params::service_hasstatus,
-  $service_hasrestart   = $openondemand::params::service_hasrestart,
-  $config_path          = $openondemand::params::config_path
 ) inherits openondemand::params {
 
   if $ood_pun_stage_cmd_sudo {
@@ -80,14 +68,12 @@ class openondemand (
 
   include openondemand::install
   include openondemand::apache
-  #include openondemand::nginx
   include openondemand::config
   include openondemand::service
 
   anchor { 'openondemand::start': }->
   Class['openondemand::install']->
   Class['openondemand::apache']->
-  #Class['openondemand::nginx']->
   Class['openondemand::config']->
   Class['openondemand::service']->
   anchor { 'openondemand::end': }

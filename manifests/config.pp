@@ -44,4 +44,10 @@ class openondemand::config {
     content => template('openondemand/ood-cron.erb'),
   }
 
+  exec { 'nginx_stage enable scl':
+    path    => '/usr/bin:/bin:/usr/sbin:/sbin',
+    command => "sed -r 's/^#exec scl (.*)$/exec scl \\1/g' /opt/ood/nginx_stage/bin/ood_ruby",
+    unless  => "egrep '^exec scl' /opt/ood/nginx_stage/bin/ood_ruby",
+  }
+
 }

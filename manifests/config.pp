@@ -46,8 +46,8 @@ class openondemand::config {
 
   exec { 'nginx_stage enable scl':
     path    => '/usr/bin:/bin:/usr/sbin:/sbin',
-    command => "sed -i -r 's/^#exec scl (.*)$/exec scl \\1/g' /opt/ood/nginx_stage/bin/ood_ruby",
-    unless  => "egrep '^exec scl' /opt/ood/nginx_stage/bin/ood_ruby",
+    command => "sed -i 's/^#exec scl/exec scl/g' /opt/ood/nginx_stage/bin/ood_ruby",
+    unless  => "egrep -q '^exec scl' /opt/ood/nginx_stage/bin/ood_ruby",
   }
 
 }

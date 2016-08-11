@@ -13,6 +13,7 @@ describe 'openondemand' do
       let(:facts) do
         facts.merge({
           :concat_basedir => '/dne',
+          :sudoversion    => '1.8.6p3',
         })
       end
 

@@ -32,6 +32,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   SSLEngine On
   SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
   SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
+  <%- if scope['openondemand::ssl_certificate_chain_file'] -%>
+  SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
+  <%- end -%>
   <%- end -%>
 
   ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log

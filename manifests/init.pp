@@ -50,6 +50,8 @@ class openondemand (
   $ood_auth_discover_root           = '/var/www/ood/discover',
   $ood_auth_register_uri            = '/register',
   $ood_auth_register_root           = '/var/www/ood/register',
+
+  $clusters = {},
 ) inherits openondemand::params {
 
   if $ood_pun_stage_cmd_sudo {
@@ -77,5 +79,7 @@ class openondemand (
   Class['openondemand::config']->
   Class['openondemand::service']->
   anchor { 'openondemand::end': }
+
+  create_resources('openondemand::cluster', $clusters)
 
 }

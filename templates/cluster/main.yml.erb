@@ -1,7 +1,7 @@
 ---
 v1:
-  title: <%= @cluster_title %>
-  url: <%= @url %>
+  title: "<%= @cluster_title %>"
+  url: "<%= @url %>"
 <% if @group_validators && ! @group_validators.empty? -%>
   validators:
   <%- @group_validators.keys.sort.each do |gv| -%>
@@ -59,7 +59,7 @@ v1:
             <%- end -%>
             req_query:
             <%- @ganglia_req_query.keys.sort.each do |r| -%>
-              <%= r %>: <%= @ganglia_req_query[r] %>
+              <%= r %>: "<%= @ganglia_req_query[r] %>"
             <%- end -%>
             opt_query:
             <%- @ganglia_opt_query.keys.sort.each do |o| -%>

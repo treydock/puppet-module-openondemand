@@ -47,6 +47,7 @@ define openondemand::cluster (
     group   => 'root',
     mode    => '0644',
     content => template('openondemand/cluster/main.yml.erb'),
+    notify  => Class['openondemand::service'],
   }
 
 }

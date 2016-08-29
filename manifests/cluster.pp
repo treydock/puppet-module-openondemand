@@ -3,6 +3,7 @@ define openondemand::cluster (
   $cluster_title = $name,
   $url = "http://${::domain}",
   $group_validators = {},
+  $hpc_cluster = true,
   $login_server = undef,
   $resource_mgr_type = 'torque',
   $resource_mgr_host = undef,

@@ -19,6 +19,7 @@ v1:
   cluster:
     type: "OodCluster::Cluster"
     data:
+      hpc_cluster: <%= @hpc_cluster %>
       servers:
   <%- if @login_server -%>
         login:

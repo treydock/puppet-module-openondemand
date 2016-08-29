@@ -1,0 +1,70 @@
+---
+v1:
+  title: <%= @cluster_title %>
+  url: <%= @url %>
+<% if @group_validators && ! @group_validators.empty? -%>
+  validators:
+  <%- @group_validators.keys.sort.each do |gv| -%>
+    <%= gv %>:
+      - type: "OodAppkit::Validators::Groups"
+        data:
+          groups:
+          <%- @group_validators[gv]['groups'].each do |g| -%>
+            - "<%= g %>"
+          <%- end -%>
+          allow: <%= @group_validators[gv]['allow'] %>
+  <%- end -%>
+<% end -%>
+<%- if @login_server || @resource_mgr_host || @scheduler_host || @ganglia_host -%>
+  cluster:
+    type: "OodCluster::Cluster"
+    data:
+      hpc_cluster: <%= @hpc_cluster %>
+      servers:
+  <%- if @login_server -%>
+        login:
+          type: "OodCluster::Servers::Ssh"
+          data:
+            host: "<%= @login_server %>"
+  <%- end -%>
+  <%- if @resource_mgr_host -%>
+        resource_mgr:
+          type: "<%= @_resource_mgr_type %>"
+          data:
+            host: "<%= @resource_mgr_host %>"
+            lib: "<%= @resource_mgr_lib %>"
+            bin: "<%= @resource_mgr_bin %>"
+            version: "<%= @resource_mgr_version %>"
+  <%- end -%>
+  <%- if @scheduler_host -%>
+        scheduler:
+          type: "<%= @_scheduler_type %>"
+          data:
+            host: "<%= @scheduler_host %>"
+            bin: "<%= @scheduler_bin %>"
+            version: "<%= @scheduler_version %>"
+          <%- @scheduler_params.keys.sort.each do |scheduler_param| -%>
+            <%= scheduler_param %>: "<%= @scheduler_params[scheduler_param] %>"
+          <%- end -%>
+  <%- end -%>
+  <%- if @ganglia_host -%>
+        ganglia:
+          type: "OodCluster::Servers::Ganglia"
+          data:
+            host: "<%= @ganglia_host %>"
+            scheme: "<%= @ganglia_scheme %>"
+            segments:
+            <%- @ganglia_segments.each do |ganglia_segment| -%>
+              - "<%= ganglia_segment %>"
+            <%- end -%>
+            req_query:
+            <%- @ganglia_req_query.keys.sort.each do |r| -%>
+              <%= r %>: <%= @ganglia_req_query[r] %>
+            <%- end -%>
+            opt_query:
+            <%- @ganglia_opt_query.keys.sort.each do |o| -%>
+              <%= o %>: "<%= @ganglia_opt_query[o] %>"
+            <%- end -%>
+            version: "<%= @ganglia_version %>"
+  <%- end -%>
+<%- end -%>

@@ -51,6 +51,9 @@ class openondemand (
   $ood_auth_discover_root           = '/var/www/ood/discover',
   $ood_auth_register_uri            = '/register',
   $ood_auth_register_root           = '/var/www/ood/register',
+
+  $clusters = {},
+  $clusters_hiera_hash = true,
 ) inherits openondemand::params {
 
   if $ood_pun_stage_cmd_sudo {
@@ -67,6 +70,12 @@ class openondemand (
   $_ood_auth_discovery_ensure     = pick($ood_auth_discovery_ensure, $packages_ensure)
   $_ood_auth_registration_ensure  = pick($ood_auth_registration_ensure, $packages_ensure)
 
+  if $clusters_hiera_hash {
+    $_clusters = hiera_hash('openondemand::clusters', {})
+  } else {
+    $_clusters = $clusters
+  }
+
   include openondemand::install
   include openondemand::apache
   include openondemand::config
@@ -78,5 +87,7 @@ class openondemand (
   Class['openondemand::config']->
   Class['openondemand::service']->
   anchor { 'openondemand::end': }
+
+  create_resources('openondemand::cluster', $_clusters)
 
 }

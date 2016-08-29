@@ -4,6 +4,27 @@ class openondemand::config {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
+  file { '/etc/ood':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
+  file { '/etc/ood/config':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
+  file { '/etc/ood/config/clusters.d':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
   file { $openondemand::ood_public_root:
     ensure => 'directory',
     owner  => 'root',

@@ -29,6 +29,7 @@ class openondemand (
   $ood_ip                           = $::ipaddress,
   $ood_port                         = '443',
   $ood_server_name                  = $::fqdn,
+  $ood_server_aliases               = [],
   $ood_public_root                  = '/var/www/ood/public',
   $ood_public_uri                   = '/public',
   $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
@@ -55,6 +56,8 @@ class openondemand (
   $clusters = {},
   $clusters_hiera_hash = true,
 ) inherits openondemand::params {
+
+  validate_array($ood_server_aliases)
 
   if $ood_pun_stage_cmd_sudo {
     $_ood_pun_stage_cmd_full = "sudo ${ood_pun_stage_cmd}"

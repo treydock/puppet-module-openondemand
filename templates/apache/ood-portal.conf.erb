@@ -10,6 +10,9 @@
 Listen <%= "#{scope['openondemand::ood_ip']}:80" %>
 <VirtualHost "<%= "#{scope['openondemand::ood_ip']}:80" %>">
   ServerName "<%= scope['openondemand::ood_server_name'] %>"
+  <%- scope['openondemand::ood_server_aliases'].each do |server_alias| -%>
+  ServerAlias "<%= server_alias %>"
+  <%- end -%>
   Redirect permanent / https://<%= scope['openondemand::ood_server_name'] %><%= ":#{scope['openondemand::ood_port']}" if scope['openondemand::ood_port'] != '443' %>/
 </VirtualHost>
 <%- end -%>
@@ -25,6 +28,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   # Name that the server uses to identify itself
   #
   ServerName "<%= scope['openondemand::ood_server_name'] %>"
+  <%- scope['openondemand::ood_server_aliases'].each do |server_alias| -%>
+  ServerAlias "<%= server_alias %>"
+  <%- end -%>
 
   <%- if scope['openondemand::ood_ssl'] %>
   # Enable SSL support

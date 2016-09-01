@@ -31,6 +31,7 @@ describe 'openondemand' do
       #include_context 'openondemand::install'
       #include_context 'openondemand::config'
       #include_context 'openondemand::service'
+      include_context 'openondemand::apache'
 
       # Test validate_bool parameters
       [

@@ -32,6 +32,12 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   ServerAlias "<%= server_alias %>"
   <%- end -%>
 
+  <%- if ! scope['openondemand::ood_server_aliases'].empty? %>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} !^<%= scope['openondemand::ood_server_name'] %> [NC]
+  RewriteRule ^(.*)$ <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/$1 [L,R=301]
+
+  <%- end -%>
   <%- if scope['openondemand::ood_ssl'] %>
   # Enable SSL support
   #

@@ -10,6 +10,12 @@ define openondemand::install::component (
   $_source      = pick($source, "https://github.com/OSC/${name}.git")
   $_parent_dir  = dirname($path)
 
+  if $revision in ['undef', 'unset', 'UNSET'] {
+    $_revision = undef
+  } else {
+    $_revision = $revision
+  }
+
   case $install_method {
     'rake': {
       $_command = 'scl enable rh-ruby22 -- rake install'
@@ -26,7 +32,7 @@ define openondemand::install::component (
     provider => 'git',
     path     => $path,
     source   => $_source,
-    revision => $revision,
+    revision => $_revision,
     require  => File[$_parent_dir],
     notify   => $_notify,
   }

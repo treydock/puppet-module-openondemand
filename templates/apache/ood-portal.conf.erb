@@ -36,8 +36,15 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   RewriteEngine On
   RewriteCond %{HTTP_HOST} !^<%= scope['openondemand::ood_server_name'] %> [NC]
   RewriteRule ^(.*)$ <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/$1 [L,R=301]
-
   <%- end -%>
+
+  <%- if scope['openondemand::ood_logs'] -%>
+  # Enable custom server logs
+  #
+  ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log
+  CustomLog logs/<%= scope['openondemand::ood_server_name'] %>_access.log combined
+  <%- end -%>
+
   <%- if scope['openondemand::ood_ssl'] %>
   # Enable SSL support
   #
@@ -48,16 +55,19 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
   <%- end -%>
   <%- end -%>
-
-  ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log
-  CustomLog logs/<%= scope['openondemand::ood_server_name'] %>_access.log combined
-<%- end -%>
+<%- end # End use_virtual_host -%>
 
   <%- unless scope['openondemand::ood_lua_root'].empty? -%>
   # Location of OOD Lua scripts
   #
   LuaRoot "<%= scope['openondemand::ood_lua_root'] %>"
   <%- end %>
+
+  <%- unless scope['openondemand::ood_lua_log_level'].empty? -%>
+  # Log level for OOD Lua scripts
+  #
+  LogLevel lua_module:<%= scope['openondemand::ood_lua_log_level'] %>
+  <%- end -%>
 
   # Command used to map authenticated user to system user
   #

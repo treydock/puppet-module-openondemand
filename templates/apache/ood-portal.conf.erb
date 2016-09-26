@@ -17,6 +17,16 @@ Listen <%= "#{scope['openondemand::ood_ip']}:80" %>
 </VirtualHost>
 <%- end -%>
 
+<%- if ! scope['openondemand::ood_server_aliases'].empty? -%>
+<VirtualHost "<%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %>">
+  ServerName "<%= scope['openondemand::ood_server_aliases'][0] %>"
+  <%- scope['openondemand::ood_server_aliases'][1..-1].each do |server_alias| -%>
+  ServerAlias "<%= server_alias %>"
+  <%- end -%>
+  Redirect permanent / <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/
+</VirtualHost>
+<%- end -%>
+
 # Listen on specified ip and port
 #
 Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %><%= ' https' if scope['openondemand::ood_ssl'] %>
@@ -28,15 +38,6 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   # Name that the server uses to identify itself
   #
   ServerName "<%= scope['openondemand::ood_server_name'] %>"
-  <%- scope['openondemand::ood_server_aliases'].each do |server_alias| -%>
-  ServerAlias "<%= server_alias %>"
-  <%- end -%>
-
-  <%- if ! scope['openondemand::ood_server_aliases'].empty? %>
-  RewriteEngine On
-  RewriteCond %{HTTP_HOST} !^<%= scope['openondemand::ood_server_name'] %> [NC]
-  RewriteRule ^(.*)$ <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/$1 [L,R=301]
-  <%- end -%>
 
   <%- if scope['openondemand::ood_logs'] -%>
   # Enable custom server logs

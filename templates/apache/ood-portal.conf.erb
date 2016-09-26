@@ -117,6 +117,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_node_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     SetEnv OOD_NODE_URI "<%= scope['openondemand::ood_node_uri'] %>"
     LuaHookFixups node_proxy.lua node_proxy_handler
@@ -135,6 +138,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_rnode_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     SetEnv OOD_IS_RELATIVE "true"
     SetEnv OOD_NODE_URI "<%= scope['openondemand::ood_rnode_uri'] %>"
@@ -155,6 +161,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_pun_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     SetEnv OOD_PUN_SOCKET_ROOT "<%= scope['openondemand::ood_pun_socket_root'] %>"
     SetEnv OOD_PUN_MAX_RETRIES "<%= scope['openondemand::ood_pun_max_retries'] %>"
@@ -174,6 +183,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_nginx_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     LuaHookFixups nginx.lua nginx_handler
   </Location>
@@ -197,6 +209,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_auth_oidc_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
   </Location>
 
   # Discover URI for OpenID Connect (used for multiple Id Providers):
@@ -222,6 +237,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
     AllowOverride None
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
   </Directory>
   <%- end -%>
 

@@ -23,6 +23,14 @@ Listen <%= "#{scope['openondemand::ood_ip']}:80" %>
   <%- scope['openondemand::ood_server_aliases'][1..-1].each do |server_alias| -%>
   ServerAlias "<%= server_alias %>"
   <%- end -%>
+  <%- if scope['openondemand::ood_ssl'] -%>
+  SSLEngine On
+  SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
+  SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
+  <%- if scope['openondemand::ssl_certificate_chain_file'] -%>
+  SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
+  <%- end -%>
+  <%- end -%>
   Redirect permanent / <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/
 </VirtualHost>
 <%- end -%>

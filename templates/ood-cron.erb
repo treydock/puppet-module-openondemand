@@ -1,0 +1,4 @@
+#!/bin/bash
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+0 */2 * * * root [ -f <%= scope['openondemand::ood_pun_stage_cmd'] %> ] && <%= scope['openondemand::ood_pun_stage_cmd'] %> nginx_clean 1>/dev/null

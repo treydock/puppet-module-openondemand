@@ -42,6 +42,7 @@ class openondemand (
   $ood_node_uri                     = '/node',
   $ood_rnode_uri                    = '/rnode',
   $ood_auth_type                    = 'openid-connect',
+  $ood_auth_extend                  = [],
   $ood_pun_uri                      = '/pun',
   $ood_pun_socket_root              = '/var/run/nginx',
   $ood_pun_max_retries              = '5',

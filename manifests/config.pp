@@ -25,6 +25,30 @@ class openondemand::config {
     mode   => '0755',
   }
 
+  #Yaml_setting <| tag == 'nginx_stage' |> {
+  #  target => 
+  #}
+
+  #yaml_setting { 'nginx_stage-opt_in_metrics':
+  #  target => '/opt/ood/nginx_stage/config/nginx_stage.yml',
+  #  key    => 'opt_in_metrics',
+  #  value  => $openondemand::nginx_stage_opt_in_metrics,
+  #}
+
+  #yaml_setting { 'nginx_stage-app_root':
+  #  target => '/opt/ood/nginx_stage/config/nginx_stage.yml',
+  #  key    => 'app_root',
+  #  value  => $openondemand::nginx_stage_app_root,
+  #}
+
+  file { '/opt/ood/nginx_stage/config/nginx_stage.yml':
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('openondemand/nginx_stage.yml.erb'),
+  }
+
   file { $openondemand::ood_public_root:
     ensure => 'directory',
     owner  => 'root',

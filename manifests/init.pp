@@ -56,6 +56,9 @@ class openondemand (
   $ood_auth_register_uri            = '/register',
   $ood_auth_register_root           = '/var/www/ood/register',
 
+  $nginx_stage_opt_in_metrics       = false,
+  $nginx_stage_app_root             = $openondemand::params::nginx_stage_app_root,
+
   $clusters = {},
   $clusters_hiera_hash = true,
 ) inherits openondemand::params {

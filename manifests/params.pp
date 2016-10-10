@@ -1,6 +1,12 @@
 # Private class.
 class openondemand::params {
 
+  $nginx_stage_app_root = {
+    'dev' => '~%{owner}/ondemand/%{env}/%{name}',
+    'usr' => '/var/www/ood/apps/%{env}/%{owner}/gateway/%{name}',
+    'sys' => '/var/www/ood/apps/%{env}/%{name}',
+  }
+
   case $::osfamily {
     'RedHat': {
       if $::operatingsystemmajrelease == '6' {

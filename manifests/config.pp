@@ -50,7 +50,8 @@ class openondemand::config {
   }
 
   file { $openondemand::ood_public_root:
-    ensure => 'directory',
+    ensure => $openondemand::_public_ensure,
+    target => $openondemand::_public_target,
     owner  => 'root',
     group  => 'root',
     mode   => '0755',
@@ -64,7 +65,8 @@ class openondemand::config {
   }
 
   file { "${openondemand::_ood_web_directory}/apps/sys":
-    ensure => 'directory',
+    ensure => $openondemand::_sys_ensure,
+    target => $openondemand::_sys_target,
     owner  => 'root',
     group  => 'root',
     mode   => '0755',

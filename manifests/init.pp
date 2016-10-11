@@ -61,6 +61,8 @@ class openondemand (
 
   $clusters = {},
   $clusters_hiera_hash = true,
+
+  $develop_root_dir = undef,
 ) inherits openondemand::params {
 
   validate_array($ood_server_aliases)
@@ -83,6 +85,24 @@ class openondemand (
     $_clusters = hiera_hash('openondemand::clusters', {})
   } else {
     $_clusters = $clusters
+  }
+
+  if $develop_root_dir {
+    $_develop_mode = true
+    $_sys_ensure = 'link'
+    $_sys_target = "${develop_root_dir}/sys"
+    $_public_ensure = 'link'
+    $_public_target = "${develop_root_dir}/public"
+    $_discover_target = "${develop_root_dir}/discover"
+    $_register_target = "${develop_root_dir}/register"
+  } else {
+    $_develop_mode = false
+    $_sys_ensure = 'directory'
+    $_sys_target = undef
+    $_public_ensure = 'directory'
+    $_public_target = undef
+    $_discover_target = undef
+    $_register_target = undef
   }
 
   include openondemand::install

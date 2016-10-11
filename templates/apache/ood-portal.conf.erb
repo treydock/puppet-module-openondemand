@@ -168,6 +168,7 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
     SetEnv OOD_PUN_SOCKET_ROOT "<%= scope['openondemand::ood_pun_socket_root'] %>"
     SetEnv OOD_PUN_MAX_RETRIES "<%= scope['openondemand::ood_pun_max_retries'] %>"
     LuaHookFixups pun_proxy.lua pun_proxy_handler
+    ProxyPassReverse "http://localhost<%= scope['openondemand::ood_pun_uri'] %>"
   </Location>
   <%- end -%>
 

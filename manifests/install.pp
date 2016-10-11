@@ -48,18 +48,20 @@ class openondemand::install {
     revision => $openondemand::ood_auth_map_revision,
   }
 
-  openondemand::install::component { 'ood_auth_discovery':
-    ensure         => $openondemand::_ood_auth_discovery_ensure,
-    path           => $openondemand::ood_auth_discover_root,
-    revision       => $openondemand::ood_auth_discovery_revision,
-    install_method => 'none',
-  }
+  if $openondemand::ood_auth_setup {
+    openondemand::install::component { 'ood_auth_discovery':
+      ensure         => $openondemand::_ood_auth_discovery_ensure,
+      path           => $openondemand::ood_auth_discover_root,
+      revision       => $openondemand::ood_auth_discovery_revision,
+      install_method => 'none',
+    }
 
-  openondemand::install::component { 'ood_auth_registration':
-    ensure         => $openondemand::_ood_auth_registration_ensure,
-    path           => $openondemand::ood_auth_register_root,
-    revision       => $openondemand::ood_auth_registration_revision,
-    install_method => 'none',
+    openondemand::install::component { 'ood_auth_registration':
+      ensure         => $openondemand::_ood_auth_registration_ensure,
+      path           => $openondemand::ood_auth_register_root,
+      revision       => $openondemand::ood_auth_registration_revision,
+      install_method => 'none',
+    }
   }
 
 }

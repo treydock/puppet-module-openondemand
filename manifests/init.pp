@@ -63,6 +63,8 @@ class openondemand (
   $clusters_hiera_hash = true,
 
   $develop_root_dir = undef,
+  $usr_apps         = {},
+  $usr_app_defaults = {},
 ) inherits openondemand::params {
 
   validate_array($ood_server_aliases)
@@ -118,5 +120,13 @@ class openondemand (
   anchor { 'openondemand::end': }
 
   create_resources('openondemand::cluster', $_clusters)
+
+  if is_array($usr_apps) {
+    ensure_resource('openondemand::app::usr', $usr_apps, $usr_app_defaults)
+  } elsif is_hash($usr_apps) {
+    create_resources('openondemand::app::usr', $usr_apps, $usr_app_defaults)
+  } else {
+    fail("${module_name}: usr_apps must be an array or hash.")
+  }
 
 }

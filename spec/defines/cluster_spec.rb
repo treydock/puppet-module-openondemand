@@ -5,7 +5,7 @@ describe 'openondemand::cluster' do
     :supported_os => [
       {
         "operatingsystem" => "RedHat",
-        "operatingsystemrelease" => ["6", "7"],
+        "operatingsystemrelease" => ["6"],
       }
     ]
   }).each do |os, facts|

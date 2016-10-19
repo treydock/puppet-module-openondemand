@@ -23,6 +23,8 @@ define openondemand::cluster (
   $ganglia_version = '3',
 ) {
 
+  include openondemand
+
   case $resource_mgr_type {
     'torque': {
       $_resource_mgr_type = 'OodCluster::Servers::Torque'

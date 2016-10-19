@@ -30,6 +30,7 @@ class openondemand (
   $ood_port                         = '443',
   $ood_server_name                  = $::fqdn,
   $ood_server_aliases               = [],
+  $ood_logs                         = true,
   $ood_public_root                  = '/var/www/ood/public',
   $ood_public_uri                   = '/public',
   $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
@@ -37,9 +38,11 @@ class openondemand (
   $ood_pun_stage_cmd_sudo           = true,
   $ood_map_fail_uri                 = '/register',
   $ood_lua_root                     = '/opt/ood/mod_ood_proxy/lib',
+  $ood_lua_log_level                = 'info',
   $ood_node_uri                     = '/node',
   $ood_rnode_uri                    = '/rnode',
   $ood_auth_type                    = 'openid-connect',
+  $ood_auth_extend                  = [],
   $ood_pun_uri                      = '/pun',
   $ood_pun_socket_root              = '/var/run/nginx',
   $ood_pun_max_retries              = '5',
@@ -53,8 +56,15 @@ class openondemand (
   $ood_auth_register_uri            = '/register',
   $ood_auth_register_root           = '/var/www/ood/register',
 
+  $nginx_stage_opt_in_metrics       = false,
+  $nginx_stage_app_root             = $openondemand::params::nginx_stage_app_root,
+
   $clusters = {},
   $clusters_hiera_hash = true,
+
+  $develop_root_dir = undef,
+  $usr_apps         = {},
+  $usr_app_defaults = {},
 ) inherits openondemand::params {
 
   validate_array($ood_server_aliases)
@@ -79,6 +89,24 @@ class openondemand (
     $_clusters = $clusters
   }
 
+  if $develop_root_dir {
+    $_develop_mode = true
+    $_sys_ensure = 'link'
+    $_sys_target = "${develop_root_dir}/sys"
+    $_public_ensure = 'link'
+    $_public_target = "${develop_root_dir}/public"
+    $_discover_target = "${develop_root_dir}/discover"
+    $_register_target = "${develop_root_dir}/register"
+  } else {
+    $_develop_mode = false
+    $_sys_ensure = 'directory'
+    $_sys_target = undef
+    $_public_ensure = 'directory'
+    $_public_target = undef
+    $_discover_target = undef
+    $_register_target = undef
+  }
+
   include openondemand::install
   include openondemand::apache
   include openondemand::config
@@ -92,5 +120,13 @@ class openondemand (
   anchor { 'openondemand::end': }
 
   create_resources('openondemand::cluster', $_clusters)
+
+  if is_array($usr_apps) {
+    ensure_resource('openondemand::app::usr', $usr_apps, $usr_app_defaults)
+  } elsif is_hash($usr_apps) {
+    create_resources('openondemand::app::usr', $usr_apps, $usr_app_defaults)
+  } else {
+    fail("${module_name}: usr_apps must be an array or hash.")
+  }
 
 }

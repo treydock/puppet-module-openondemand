@@ -17,6 +17,24 @@ Listen <%= "#{scope['openondemand::ood_ip']}:80" %>
 </VirtualHost>
 <%- end -%>
 
+<%- if ! scope['openondemand::ood_server_aliases'].empty? -%>
+<VirtualHost "<%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %>">
+  ServerName "<%= scope['openondemand::ood_server_aliases'][0] %>"
+  <%- scope['openondemand::ood_server_aliases'][1..-1].each do |server_alias| -%>
+  ServerAlias "<%= server_alias %>"
+  <%- end -%>
+  <%- if scope['openondemand::ood_ssl'] -%>
+  SSLEngine On
+  SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
+  SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
+  <%- if scope['openondemand::ssl_certificate_chain_file'] -%>
+  SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
+  <%- end -%>
+  <%- end -%>
+  Redirect permanent / <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/
+</VirtualHost>
+<%- end -%>
+
 # Listen on specified ip and port
 #
 Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %><%= ' https' if scope['openondemand::ood_ssl'] %>
@@ -28,16 +46,14 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   # Name that the server uses to identify itself
   #
   ServerName "<%= scope['openondemand::ood_server_name'] %>"
-  <%- scope['openondemand::ood_server_aliases'].each do |server_alias| -%>
-  ServerAlias "<%= server_alias %>"
+
+  <%- if scope['openondemand::ood_logs'] -%>
+  # Enable custom server logs
+  #
+  ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log
+  CustomLog logs/<%= scope['openondemand::ood_server_name'] %>_access.log combined
   <%- end -%>
 
-  <%- if ! scope['openondemand::ood_server_aliases'].empty? %>
-  RewriteEngine On
-  RewriteCond %{HTTP_HOST} !^<%= scope['openondemand::ood_server_name'] %> [NC]
-  RewriteRule ^(.*)$ <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/$1 [L,R=301]
-
-  <%- end -%>
   <%- if scope['openondemand::ood_ssl'] %>
   # Enable SSL support
   #
@@ -48,16 +64,19 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
   <%- end -%>
   <%- end -%>
-
-  ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log
-  CustomLog logs/<%= scope['openondemand::ood_server_name'] %>_access.log combined
-<%- end -%>
+<%- end # End use_virtual_host -%>
 
   <%- unless scope['openondemand::ood_lua_root'].empty? -%>
   # Location of OOD Lua scripts
   #
   LuaRoot "<%= scope['openondemand::ood_lua_root'] %>"
   <%- end %>
+
+  <%- unless scope['openondemand::ood_lua_log_level'].empty? -%>
+  # Log level for OOD Lua scripts
+  #
+  LogLevel lua_module:<%= scope['openondemand::ood_lua_log_level'] %>
+  <%- end -%>
 
   # Command used to map authenticated user to system user
   #
@@ -98,6 +117,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_node_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     SetEnv OOD_NODE_URI "<%= scope['openondemand::ood_node_uri'] %>"
     LuaHookFixups node_proxy.lua node_proxy_handler
@@ -116,6 +138,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_rnode_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     SetEnv OOD_IS_RELATIVE "true"
     SetEnv OOD_NODE_URI "<%= scope['openondemand::ood_rnode_uri'] %>"
@@ -136,10 +161,14 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_pun_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     SetEnv OOD_PUN_SOCKET_ROOT "<%= scope['openondemand::ood_pun_socket_root'] %>"
     SetEnv OOD_PUN_MAX_RETRIES "<%= scope['openondemand::ood_pun_max_retries'] %>"
     LuaHookFixups pun_proxy.lua pun_proxy_handler
+    ProxyPassReverse "http://localhost<%= scope['openondemand::ood_pun_uri'] %>"
   </Location>
   <%- end -%>
 
@@ -155,6 +184,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_nginx_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
 
     LuaHookFixups nginx.lua nginx_handler
   </Location>
@@ -178,6 +210,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   <Location "<%= scope['openondemand::ood_auth_oidc_uri'] %>">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
   </Location>
 
   # Discover URI for OpenID Connect (used for multiple Id Providers):
@@ -203,6 +238,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
     AllowOverride None
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
+    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%= ood_auth_extend %>
+    <%- end -%>
   </Directory>
   <%- end -%>
 

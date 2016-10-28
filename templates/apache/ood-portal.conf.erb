@@ -169,6 +169,12 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
     SetEnv OOD_PUN_MAX_RETRIES "<%= scope['openondemand::ood_pun_max_retries'] %>"
     LuaHookFixups pun_proxy.lua pun_proxy_handler
     ProxyPassReverse "http://localhost<%= scope['openondemand::ood_pun_uri'] %>"
+    <%- if scope['openondemand::ood_analytics_opt_in'] -%>
+
+    SetEnv OOD_ANALYTICS_TRACKING_URL "<%= scope['openondemand::ood_analytics_tracking_url'] %>"
+    SetEnv OOD_ANALYTICS_TRACKING_ID "<%= scope['openondemand::ood_analytics_tracking_id'] %>"
+    LuaHookLog analytics.lua analytics_handler
+    <%- end -%>
   </Location>
   <%- end -%>
 

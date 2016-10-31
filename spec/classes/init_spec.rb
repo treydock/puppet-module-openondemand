@@ -11,10 +11,7 @@ describe 'openondemand' do
   }).each do |os, facts|
     context "on #{os}" do
       let(:facts) do
-        facts.merge({
-          :concat_basedir => '/dne',
-          :sudoversion    => '1.8.6p3',
-        })
+        facts
       end
 
       it { is_expected.to compile.with_all_deps }

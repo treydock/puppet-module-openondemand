@@ -18,3 +18,6 @@ dir = File.expand_path(File.dirname(__FILE__))
 Dir["#{dir}/shared_examples/**/*.rb"].sort.each {|f| require f}
 
 at_exit { RSpec::Puppet::Coverage.report! }
+
+add_custom_fact :concat_basedir, '/dne'
+add_custom_fact :sudoversion, '1.8.6p3', :confine => 'redhat-6-x86_64'

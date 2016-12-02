@@ -97,4 +97,10 @@ class openondemand::config {
     unless  => "egrep -q '^exec scl' /opt/ood/nginx_stage/bin/ood_ruby",
   }
 
+  file_line { 'ood_ruby-scl':
+    path  => '/opt/ood/nginx_stage/bin/ood_ruby',
+    line  => "exec scl enable ${openondemand::nginx_stage_ood_ruby_scl} -- exec /bin/env ruby \"\$@\"",
+    match => '^exec scl',
+  }
+
 }

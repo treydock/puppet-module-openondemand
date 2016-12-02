@@ -56,8 +56,13 @@ class openondemand (
   $ood_auth_register_uri            = '/register',
   $ood_auth_register_root           = '/var/www/ood/register',
 
+  $ood_analytics_opt_in             = false,
+  $ood_analytics_tracking_url       = 'http://www.google-analytics.com/collect',
+  $ood_analytics_tracking_id        = 'UA-79331310-4',
+
   $nginx_stage_opt_in_metrics       = false,
   $nginx_stage_app_root             = $openondemand::params::nginx_stage_app_root,
+  $nginx_stage_ood_ruby_scl         = 'nginx16 rh-passenger40 rh-ruby22 nodejs010 git19',
 
   $clusters = {},
   $clusters_hiera_hash = true,

@@ -23,6 +23,7 @@ class openondemand::config {
     owner  => 'root',
     group  => 'root',
     mode   => '0755',
+    purge  => true,
   }
 
   #Yaml_setting <| tag == 'nginx_stage' |> {

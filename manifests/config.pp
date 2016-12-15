@@ -19,11 +19,12 @@ class openondemand::config {
   }
 
   file { '/etc/ood/config/clusters.d':
-    ensure => 'directory',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
-    purge  => true,
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    purge   => true,
+    recurse => true,
   }
 
   #Yaml_setting <| tag == 'nginx_stage' |> {

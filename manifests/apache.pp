@@ -18,6 +18,7 @@ class openondemand::apache {
       vhost_dir      => '/opt/rh/httpd24/root/etc/httpd/conf.d',
       mod_dir        => '/opt/rh/httpd24/root/etc/httpd/conf.modules.d',
       ports_file     => '/opt/rh/httpd24/root/etc/httpd/conf/ports.conf',
+      ssl_file       => '/opt/rh/httpd24/root/etc/httpd/conf.d/ssl.conf',
       logroot        => '/var/log/httpd24',
     }
     class { '::apache::mod::ssl':

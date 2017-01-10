@@ -9,7 +9,7 @@ fixtures:
       repo: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
     apache:
       repo: https://github.com/puppetlabs/puppetlabs-apache.git
-      ref: 1.10.0
+      ref: 1.11.0
     sudo:
       repo: https://github.com/saz/puppet-sudo.git
 #    yamlfile:

@@ -19,10 +19,12 @@ class openondemand::config {
   }
 
   file { '/etc/ood/config/clusters.d':
-    ensure => 'directory',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    purge   => true,
+    recurse => true,
   }
 
   #Yaml_setting <| tag == 'nginx_stage' |> {
@@ -98,9 +100,10 @@ class openondemand::config {
   }
 
   file_line { 'ood_ruby-scl':
-    path  => '/opt/ood/nginx_stage/bin/ood_ruby',
-    line  => "exec scl enable ${openondemand::nginx_stage_ood_ruby_scl} -- exec /bin/env ruby \"\$@\"",
-    match => '^exec scl',
+    path    => '/opt/ood/nginx_stage/bin/ood_ruby',
+    line    => "exec scl enable ${openondemand::nginx_stage_ood_ruby_scl} -- exec /bin/env ruby \"\$@\"",
+    match   => '^exec scl',
+    require => Exec['nginx_stage enable scl'],
   }
 
 }

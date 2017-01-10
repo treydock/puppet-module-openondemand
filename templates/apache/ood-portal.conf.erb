@@ -114,16 +114,16 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
   #    #=> ws://HOST:PORT<%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
   #
-  <Location "<%= scope['openondemand::ood_node_uri'] %>">
+  <LocationMatch "^<%= scope['openondemand::ood_node_uri'] %>/(?<host>[^/]+)/(?<port>[^/]+)">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
     <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
-    SetEnv OOD_NODE_URI "<%= scope['openondemand::ood_node_uri'] %>"
+    Header edit Location "^[^/]+//[^/:]+:[^/]+" ""
     LuaHookFixups node_proxy.lua node_proxy_handler
-  </Location>
+  </LocationMatch>
   <%- end -%>
 
   <%- unless scope['openondemand::ood_rnode_uri'].empty? -%>
@@ -135,17 +135,16 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_rnode_uri'] %>/HOST/PORT/socket.io
   #    #=> ws://HOST:PORT/socket.io
   #
-  <Location "<%= scope['openondemand::ood_rnode_uri'] %>">
+  <LocationMatch "^<%= scope['openondemand::ood_rnode_uri'] %>/(?<host>[^/]+)/(?<port>[^/]+)(?<uri>.*)">
     AuthType "<%= scope['openondemand::ood_auth_type'] %>"
     Require valid-user
     <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
-    SetEnv OOD_IS_RELATIVE "true"
-    SetEnv OOD_NODE_URI "<%= scope['openondemand::ood_rnode_uri'] %>"
+    Header edit Location "^[^/]+//[^/:]+:[^/]+" "/rnode/%{MATCH_HOST}e/%{MATCH_PORT}e"
     LuaHookFixups node_proxy.lua node_proxy_handler
-  </Location>
+  </LocationMatch>
   <%- end -%>
 
   <%- unless scope['openondemand::ood_pun_uri'].empty? -%>

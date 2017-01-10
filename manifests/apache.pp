@@ -77,6 +77,7 @@ class openondemand::apache {
     package => 'httpd24-mod_ldap',
   }
   ::apache::mod { 'lua': }
+  include ::apache::mod::headers
 
   ::apache::custom_config { 'ood-portal':
     content        => template('openondemand/apache/ood-portal.conf.erb'),

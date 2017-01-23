@@ -16,45 +16,49 @@ class openondemand (
   # Apache
   $declare_apache       = true,
 
-  $ssl_certificate_file     = '/etc/pki/tls/certs/localhost.crt',
-  $ssl_certificate_key_file = '/etc/pki/tls/private/localhost.key',
-  $ssl_certificate_chain_file = undef,
-
   $cilogon_client_id      = '',
   $cilogon_client_secret  = '',
 
   #
-  $ood_ssl                          = true,
-  $ood_ssl_redirect                 = true,
   $ood_ip                           = $::ipaddress,
   $ood_port                         = '443',
   $ood_server_name                  = $::fqdn,
   $ood_server_aliases               = [],
   $ood_logs                         = true,
-  $ood_public_root                  = '/var/www/ood/public',
-  $ood_public_uri                   = '/public',
-  $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
-  $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',
-  $ood_pun_stage_cmd_sudo           = true,
-  $ood_map_fail_uri                 = '/register',
+  $ood_ssl                          = true,
+  $ood_ssl_redirect                 = true,
+  $ssl_certificate_file             = '/etc/pki/tls/certs/localhost.crt',
+  $ssl_certificate_key_file         = '/etc/pki/tls/private/localhost.key',
+  $ssl_certificate_chain_file       = undef,
+
   $ood_lua_root                     = '/opt/ood/mod_ood_proxy/lib',
   $ood_lua_log_level                = 'info',
+  $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',
+  $ood_pun_stage_cmd_sudo           = true,
+  $ood_pun_max_retries              = '5',
+  $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
+  $ood_pun_socket_root              = '/var/run/nginx',
+  $ood_public_root                  = '/var/www/ood/public',
+
+  $ood_pun_uri                      = '/pun',
   $ood_node_uri                     = '/node',
   $ood_rnode_uri                    = '/rnode',
-  $ood_auth_type                    = 'openid-connect',
-  $ood_auth_extend                  = [],
-  $ood_pun_uri                      = '/pun',
-  $ood_pun_socket_root              = '/var/run/nginx',
-  $ood_pun_max_retries              = '5',
   $ood_nginx_uri                    = '/nginx',
+  $ood_public_uri                   = '/public',
   $ood_root_uri                     = '/pun/sys/dashboard',
-  $ood_auth_setup                   = true,
-  $ood_auth_oidc_uri                = '/oidc',
-  $ood_auth_oidc_crypto_passphrase  = 'CHANGEME',
-  $ood_auth_discover_uri            = '/discover',
+
+  $ood_auth_cilogon                 = false,
+  $ood_auth_oidc_uri                = undef,
   $ood_auth_discover_root           = '/var/www/ood/discover',
-  $ood_auth_register_uri            = '/register',
+  $ood_auth_discover_uri            = undef,
   $ood_auth_register_root           = '/var/www/ood/register',
+  $ood_auth_register_uri            = undef,
+  $ood_auth_type                    = undef,
+  $ood_auth_extend                  = undef,
+  $ood_map_fail_uri                 = undef,
+
+  $basic_auth_users                 = $openondemand::params::basic_auth_users,
+  $ood_auth_oidc_crypto_passphrase  = 'CHANGEME',
 
   $ood_analytics_opt_in             = false,
   $ood_analytics_tracking_url       = 'http://www.google-analytics.com/collect',
@@ -92,6 +96,22 @@ class openondemand (
     $_clusters = hiera_hash('openondemand::clusters', {})
   } else {
     $_clusters = $clusters
+  }
+
+  if $ood_auth_cilogon {
+    $_ood_auth_oidc_uri     = pick($ood_auth_oidc_uri, '/oidc')
+    $_ood_auth_discover_uri = pick($ood_auth_discover_uri, '/discover')
+    $_ood_auth_register_uri = pick($ood_auth_register_uri, '/register')
+    $_ood_auth_type         = pick($ood_auth_type, 'openid-connect')
+    $_ood_auth_extend       = pick($ood_auth_extend, [])
+    $_ood_map_fail_uri      = pick($ood_map_fail_uri, $_ood_auth_register_uri)
+  } else {
+    $_ood_auth_oidc_uri     = pick($ood_auth_oidc_uri, false)
+    $_ood_auth_discover_uri = pick($ood_auth_discover_uri, false)
+    $_ood_auth_register_uri = pick($ood_auth_register_uri, false)
+    $_ood_auth_type         = pick($ood_auth_type, 'Basic')
+    $_ood_auth_extend       = pick($ood_auth_extend, ['AuthName "private"', 'AuthUserFile "/opt/rh/httpd24/root/etc/httpd/.htpasswd"'])
+    $_ood_map_fail_uri      = pick($ood_map_fail_uri, false)
   }
 
   if $develop_root_dir {

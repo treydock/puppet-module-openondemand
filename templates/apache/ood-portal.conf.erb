@@ -86,9 +86,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #
   SetEnv OOD_PUN_STAGE_CMD "<%= scope['openondemand::_ood_pun_stage_cmd_full'] %>"
 
-  <%- unless scope['openondemand::ood_map_fail_uri'].empty? -%>
+  <%- if scope['openondemand::_ood_map_fail_uri'] && ! scope['openondemand::_ood_map_fail_uri'].empty? -%>
   # Redirect user to this URI if fail to map to system user
-  SetEnv OOD_MAP_FAIL_URI "<%= scope['openondemand::ood_map_fail_uri'] %>"
+  SetEnv OOD_MAP_FAIL_URI "<%= scope['openondemand::_ood_map_fail_uri'] %>"
   <%- end %>
 
   <%- unless scope['openondemand::ood_public_uri'].empty? -%>
@@ -115,9 +115,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #    #=> ws://HOST:PORT<%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
   #
   <LocationMatch "^<%= scope['openondemand::ood_node_uri'] %>/(?<host>[^/]+)/(?<port>[^/]+)">
-    AuthType "<%= scope['openondemand::ood_auth_type'] %>"
+    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
-    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
@@ -136,9 +136,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #    #=> ws://HOST:PORT/socket.io
   #
   <LocationMatch "^<%= scope['openondemand::ood_rnode_uri'] %>/(?<host>[^/]+)/(?<port>[^/]+)(?<uri>.*)">
-    AuthType "<%= scope['openondemand::ood_auth_type'] %>"
+    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
-    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
@@ -158,9 +158,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #
   SetEnv OOD_PUN_URI "<%= scope['openondemand::ood_pun_uri'] %>"
   <Location "<%= scope['openondemand::ood_pun_uri'] %>">
-    AuthType "<%= scope['openondemand::ood_auth_type'] %>"
+    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
-    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
@@ -187,9 +187,9 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #
   SetEnv OOD_NGINX_URI "<%= scope['openondemand::ood_nginx_uri'] %>"
   <Location "<%= scope['openondemand::ood_nginx_uri'] %>">
-    AuthType "<%= scope['openondemand::ood_auth_type'] %>"
+    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
-    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
@@ -206,49 +206,53 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   RedirectMatch ^/$ "<%= scope['openondemand::ood_root_uri'] %>"
   <%- end -%>
 
-  <%- if scope['openondemand::ood_auth_setup'] -%>
+  <%- if scope['openondemand::_ood_auth_oidc_uri'] && ! scope['openondemand::_ood_auth_oidc_uri'].empty? -%>
   # OpenID Connect redirect URI:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_auth_oidc_uri'] %>
+  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_oidc_uri'] %>
   #    #=> handled by mod_auth_openidc
   #
-  <Location "<%= scope['openondemand::ood_auth_oidc_uri'] %>">
-    AuthType "<%= scope['openondemand::ood_auth_type'] %>"
+  <Location "<%= scope['openondemand::_ood_auth_oidc_uri'] %>">
+    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
-    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
   </Location>
 
+  <%- end -%>
+  <%- if scope['openondemand::_ood_auth_discover_uri'] && ! scope['openondemand::_ood_auth_discover_uri'].empty? -%>
   # Discover URI for OpenID Connect (used for multiple Id Providers):
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_auth_discover_uri'] %>
+  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_discover_uri'] %>
   #    #=> <%= scope['openondemand::ood_auth_discover_root'] %>/
   #
-  Alias "<%= scope['openondemand::ood_auth_discover_uri'] %>" "<%= scope['openondemand::ood_auth_discover_root'] %>"
+  Alias "<%= scope['openondemand::_ood_auth_discover_uri'] %>" "<%= scope['openondemand::ood_auth_discover_root'] %>"
   <Directory "<%= scope['openondemand::ood_auth_discover_root'] %>">
     Options Indexes FollowSymLinks
     AllowOverride None
     Require all granted
   </Directory>
 
+  <%- end -%>
+  <%- if scope['openondemand::_ood_auth_register_uri'] && ! scope['openondemand::_ood_auth_register_uri'].empty? -%>
   # Register unmapped user to grid-mapfile here:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_auth_register_uri'] %>
+  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_register_uri'] %>
   #    #=> <%= scope['openondemand::ood_auth_register_root'] %>/
   #
-  Alias "<%= scope['openondemand::ood_auth_register_uri'] %>" "<%= scope['openondemand::ood_auth_register_root'] %>"
+  Alias "<%= scope['openondemand::_ood_auth_register_uri'] %>" "<%= scope['openondemand::ood_auth_register_root'] %>"
   <Directory "<%= scope['openondemand::ood_auth_register_root'] %>">
     Options Indexes FollowSymLinks
     AllowOverride None
-    AuthType "<%= scope['openondemand::ood_auth_type'] %>"
+    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
-    <%- scope['openondemand::ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
   </Directory>
-  <%- end -%>
 
+  <%- end -%>
 <%- if use_virtual_host -%>
 </VirtualHost>
 <%- end %>

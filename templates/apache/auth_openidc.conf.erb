@@ -1,8 +1,8 @@
 # File managed by Puppet - do not edit !
 #
 OIDCMetadataDir      /opt/rh/httpd24/root/etc/httpd/metadata
-OIDCDiscoverURL      https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_auth_discover_uri'] %>
-OIDCRedirectURI      https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_auth_oidc_uri'] %>
+OIDCDiscoverURL      https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_discover_uri'] %>
+OIDCRedirectURI      https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_oidc_uri'] %>
 OIDCCryptoPassphrase "<%= scope['openondemand::ood_auth_oidc_crypto_passphrase'] %>"
 
 # Keep sessions alive for 8 hours

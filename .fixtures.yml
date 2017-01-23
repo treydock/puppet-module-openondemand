@@ -9,12 +9,14 @@ fixtures:
       repo: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
     apache:
       repo: https://github.com/puppetlabs/puppetlabs-apache.git
-      ref: 1.10.0
+      ref: 1.11.0
     sudo:
       repo: https://github.com/saz/puppet-sudo.git
 #    yamlfile:
 #      repo: https://github.com/reidmv/puppet-module-yamlfile.git
 #    filemapper:
 #      repo: https://github.com/voxpupuli/puppet-filemapper
+    httpauth:
+      repo: https://github.com/jamtur01/jamtur01-httpauth.git
   symlinks:
     openondemand: "#{source_dir}"

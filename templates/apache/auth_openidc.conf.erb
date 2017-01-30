@@ -8,3 +8,9 @@ OIDCCryptoPassphrase "<%= scope['openondemand::ood_auth_oidc_crypto_passphrase']
 # Keep sessions alive for 8 hours
 OIDCSessionInactivityTimeout 28800
 OIDCSessionMaxDuration 28800
+
+# Don't pass claims to backend servers
+OIDCPassClaimsAs environment
+
+# Strip out session cookies before passing to backend
+OIDCStripCookies mod_auth_openidc_session mod_auth_openidc_session_chunks mod_auth_openidc_session_0 mod_auth_openidc_session_1

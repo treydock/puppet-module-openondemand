@@ -7,6 +7,10 @@ class openondemand::params {
     'sys' => '/var/www/ood/apps/%{env}/%{name}',
   }
 
+  $basic_auth_users = {
+    'ood' => { 'password' => 'ood' },
+  }
+
   case $::osfamily {
     'RedHat': {
       if $::operatingsystemmajrelease == '6' {

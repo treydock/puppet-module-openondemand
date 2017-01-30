@@ -85,7 +85,7 @@ class openondemand::apache {
     verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
   }
 
-  if $openondemand::ood_auth_type == 'openid-connect' {
+  if $openondemand::_ood_auth_type == 'openid-connect' {
     # TODO: How to handle installing this module?
     ::apache::mod { 'auth_openidc': }
 
@@ -124,6 +124,16 @@ class openondemand::apache {
       group => 'apache',
       mode  => '0640',
     }
+  }
+
+  if $openondemand::_ood_auth_type == 'basic' {
+    $_basic_auth_users_defaults = {
+      'ensure'    => 'present',
+      'file'      => '/opt/rh/httpd24/root/etc/httpd/.htpasswd',
+      'mechanism' => 'basic',
+      'require'   => Package['httpd'],
+    }
+    create_resources('httpauth', $openondemand::basic_auth_users, $_basic_auth_users_defaults)
   }
 
 }

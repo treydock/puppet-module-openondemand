@@ -39,6 +39,7 @@ class openondemand (
   $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
   $ood_pun_socket_root              = '/var/run/nginx',
   $ood_public_root                  = '/var/www/ood/public',
+  $ood_host_regex                   = '[^/]+',
 
   $ood_pun_uri                      = '/pun',
   $ood_node_uri                     = '/node',

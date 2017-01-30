@@ -114,14 +114,23 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
   #    #=> ws://HOST:PORT<%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
   #
-  <LocationMatch "^<%= scope['openondemand::ood_node_uri'] %>/(?<host>[^/]+)/(?<port>[^/]+)">
+  <LocationMatch "^<%= scope['openondemand::ood_node_uri'] %>/(?<host><%= scope['openondemand::ood_host_regex'] %>)/(?<port>\d+)">
     AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
     <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
-    Header edit Location "^[^/]+//[^/:]+:[^/]+" ""
+    # ProxyPassReverse implementation
+    Header edit Location "^[^/]+//[^/]+" ""
+
+    # ProxyPassReverseCookieDomain implemenation
+    Header edit* Set-Cookie ";\s*(?i)Domain[^;]*" ""
+
+    # ProxyPassReverseCookiePath implementation
+    Header edit* Set-Cookie ";\s*(?i)Path[^;]*" ""
+    Header edit  Set-Cookie "^([^;]+)" "$1; Path=<%= scope['openondemand::ood_node_uri'] %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
+
     LuaHookFixups node_proxy.lua node_proxy_handler
   </LocationMatch>
   <%- end -%>
@@ -135,14 +144,23 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_rnode_uri'] %>/HOST/PORT/socket.io
   #    #=> ws://HOST:PORT/socket.io
   #
-  <LocationMatch "^<%= scope['openondemand::ood_rnode_uri'] %>/(?<host>[^/]+)/(?<port>[^/]+)(?<uri>.*)">
+  <LocationMatch "^<%= scope['openondemand::ood_rnode_uri'] %>/(?<host><%= scope['openondemand::ood_host_regex'] %>)/(?<port>\d+)(?<uri>/.*|)">
     AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
     Require valid-user
     <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
-    Header edit Location "^[^/]+//[^/:]+:[^/]+" "/rnode/%{MATCH_HOST}e/%{MATCH_PORT}e"
+    # ProxyPassReverse implementation
+    Header edit Location "^([^/]+//[^/]+)|(?=/)" "<%= scope['openondemand::ood_rnode_uri'] %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
+
+    # ProxyPassReverseCookieDomain implemenation
+    Header edit* Set-Cookie ";\s*(?i)Domain[^;]*" ""
+
+    # ProxyPassReverseCookiePath implementation
+    Header edit* Set-Cookie ";\s*(?i)Path[^;]*" ""
+    Header edit  Set-Cookie "^([^;]+)" "$1; Path=<%= scope['openondemand::ood_rnode_uri'] %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
+
     LuaHookFixups node_proxy.lua node_proxy_handler
   </LocationMatch>
   <%- end -%>
@@ -168,6 +186,10 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
     SetEnv OOD_PUN_MAX_RETRIES "<%= scope['openondemand::ood_pun_max_retries'] %>"
     LuaHookFixups pun_proxy.lua pun_proxy_handler
     ProxyPassReverse "http://localhost<%= scope['openondemand::ood_pun_uri'] %>"
+    ProxyPassReverseCookieDomain "localhost" "<%= scope['openondemand::ood_server_name'] %>"
+
+    # ProxyPassReverseCookiePath implementation (less restrictive)
+    Header edit* Set-Cookie ";\s*(?i)Path\s*=(?-i)(?!\s*<%= scope['openondemand::ood_pun_uri'] %>)[^;]*" "; Path=<%= scope['openondemand::ood_pun_uri'] %>"
     <%- if scope['openondemand::ood_analytics_opt_in'] -%>
 
     SetEnv OOD_ANALYTICS_TRACKING_URL "<%= scope['openondemand::ood_analytics_tracking_url'] %>"

@@ -10,8 +10,7 @@ class openondemand::service {
     subscribe   => [
       Openondemand::Install::Component['nginx_stage'],
       File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
-      Exec['nginx_stage enable scl'],
-      File_line['ood_ruby-scl'],
+      File['/opt/ood/nginx_stage/bin/ood_ruby'],
     ],
   }->
   exec { 'nginx_stage-app_reset-pun':
@@ -20,8 +19,7 @@ class openondemand::service {
     subscribe   => [
       Openondemand::Install::Component['nginx_stage'],
       File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
-      Exec['nginx_stage enable scl'],
-      File_line['ood_ruby-scl'],
+      File['/opt/ood/nginx_stage/bin/ood_ruby'],
     ],
   }->
   exec { 'nginx_stage-nginx_clean':
@@ -30,8 +28,7 @@ class openondemand::service {
     subscribe   => [
       Openondemand::Install::Component['nginx_stage'],
       File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
-      Exec['nginx_stage enable scl'],
-      File_line['ood_ruby-scl'],
+      File['/opt/ood/nginx_stage/bin/ood_ruby'],
     ],
   }
 

@@ -1,0 +1,30 @@
+#!/bin/env bash
+
+# Open OnDemand Ruby wrapper script
+#
+# The purpose of this script is to wrap up the necessary environment for the
+# per-user NGINX (PUN) processes to run under. The PUN requires the following
+# software in its environment:
+#
+# - nginx 1.6
+# - passenger 4.0
+# - ruby 2.2
+# - node.js 0.10
+# - git 1.9
+#
+
+# For Software Collections 2.0
+#
+# 1. Read in environment variable SCL_PKGS which may be set in `sudo` call
+#    otherwise fallback to default software collection packages.
+#
+# 2. Check if Software Collections is installed, then source the defined
+#    package scripts.
+#
+SCL_PKGS=${SCL_PKGS:-"<%= scope['openondemand::nginx_stage_ood_ruby_scl'] %>"}
+SCL_SOURCE=$(command -v scl_source)
+[[ ${SCL_SOURCE} ]] && source ${SCL_SOURCE} enable ${SCL_PKGS}
+
+# Environment is set, so call Ruby now
+#
+exec /bin/env ruby "$@"

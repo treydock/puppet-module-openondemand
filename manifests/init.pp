@@ -32,6 +32,7 @@ class openondemand (
   $ood_server_aliases               = [],
   $ood_logs                         = true,
   $ood_public_root                  = '/var/www/ood/public',
+  $ood_host_regex                   = '[^/]+',
   $ood_public_uri                   = '/public',
   $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
   $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',

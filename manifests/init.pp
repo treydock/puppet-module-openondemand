@@ -32,6 +32,7 @@ class openondemand (
   $ood_server_aliases               = [],
   $ood_logs                         = true,
   $ood_public_root                  = '/var/www/ood/public',
+  $ood_host_regex                   = '[^/]+',
   $ood_public_uri                   = '/public',
   $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
   $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',
@@ -60,7 +61,6 @@ class openondemand (
   $ood_analytics_tracking_url       = 'http://www.google-analytics.com/collect',
   $ood_analytics_tracking_id        = 'UA-79331310-4',
 
-  $nginx_stage_opt_in_metrics       = false,
   $nginx_stage_app_root             = $openondemand::params::nginx_stage_app_root,
   $nginx_stage_ood_ruby_scl         = 'nginx16 rh-passenger40 rh-ruby22 nodejs010 git19',
 

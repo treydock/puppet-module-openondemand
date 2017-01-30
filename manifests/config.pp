@@ -28,13 +28,7 @@ class openondemand::config {
   }
 
   #Yaml_setting <| tag == 'nginx_stage' |> {
-  #  target => 
-  #}
-
-  #yaml_setting { 'nginx_stage-opt_in_metrics':
-  #  target => '/opt/ood/nginx_stage/config/nginx_stage.yml',
-  #  key    => 'opt_in_metrics',
-  #  value  => $openondemand::nginx_stage_opt_in_metrics,
+  #  target =>
   #}
 
   #yaml_setting { 'nginx_stage-app_root':

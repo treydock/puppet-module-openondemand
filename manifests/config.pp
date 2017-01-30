@@ -45,6 +45,14 @@ class openondemand::config {
     content => template('openondemand/nginx_stage.yml.erb'),
   }
 
+  file { '/opt/ood/nginx_stage/bin/ood_ruby':
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    content => template('openondemand/ood_ruby.erb'),
+  }
+
   file { $openondemand::ood_public_root:
     ensure => $openondemand::_public_ensure,
     target => $openondemand::_public_target,
@@ -86,18 +94,4 @@ class openondemand::config {
     mode    => '0644',
     content => template('openondemand/ood-cron.erb'),
   }
-
-  exec { 'nginx_stage enable scl':
-    path    => '/usr/bin:/bin:/usr/sbin:/sbin',
-    command => "sed -i 's/^#exec scl/exec scl/g' /opt/ood/nginx_stage/bin/ood_ruby",
-    unless  => "egrep -q '^exec scl' /opt/ood/nginx_stage/bin/ood_ruby",
-  }
-
-  file_line { 'ood_ruby-scl':
-    path    => '/opt/ood/nginx_stage/bin/ood_ruby',
-    line    => "exec scl enable ${openondemand::nginx_stage_ood_ruby_scl} -- exec /bin/env ruby \"\$@\"",
-    match   => '^exec scl',
-    require => Exec['nginx_stage enable scl'],
-  }
-
 }

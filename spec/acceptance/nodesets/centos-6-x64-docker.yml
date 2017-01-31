@@ -10,8 +10,8 @@ HOSTS:
     docker_cmd:
       - '/sbin/init'
     docker_image_commands:
-      - 'yum install -y tar wget cronie git'
-    docker_container_name: 'nfs'
+      - 'yum install -y tar wget cronie git ca-certificates'
+    docker_container_name: 'openondemand'
 CONFIG:
   log_level: debug
   type: foss

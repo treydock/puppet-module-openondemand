@@ -36,7 +36,7 @@ class openondemand (
   $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',
   $ood_pun_stage_cmd_sudo           = true,
   $ood_pun_max_retries              = '5',
-  $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map',
+  $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map.regex',
   $ood_pun_socket_root              = '/var/run/nginx',
   $ood_public_root                  = '/var/www/ood/public',
   $ood_host_regex                   = '[^/]+',

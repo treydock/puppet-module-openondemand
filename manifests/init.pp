@@ -110,7 +110,7 @@ class openondemand (
     $_ood_auth_discover_uri = pick($ood_auth_discover_uri, false)
     $_ood_auth_register_uri = pick($ood_auth_register_uri, false)
     $_ood_auth_type         = pick($ood_auth_type, 'Basic')
-    $_ood_auth_extend       = pick($ood_auth_extend, ['AuthName "private"', 'AuthUserFile "/opt/rh/httpd24/root/etc/httpd/.htpasswd"'])
+    $_ood_auth_extend       = pick($ood_auth_extend, $openondemand::params::ood_auth_extend_basic)
     $_ood_map_fail_uri      = pick($ood_map_fail_uri, false)
   }
 
@@ -152,6 +152,13 @@ class openondemand (
     create_resources('openondemand::app::usr', $usr_apps, $usr_app_defaults)
   } else {
     fail("${module_name}: usr_apps must be an array or hash.")
+  }
+
+  # Allow templates to get scope of openondemand class
+  @::apache::custom_config { 'ood-portal':
+    content        => template('openondemand/apache/ood-portal.conf.erb'),
+    priority       => '10',
+    verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
   }
 
 }

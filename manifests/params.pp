@@ -11,6 +11,12 @@ class openondemand::params {
     'ood' => { 'password' => 'ood' },
   }
 
+  $ood_auth_extend_basic = [
+    'AuthName "private"',
+    'AuthUserFile "/opt/rh/httpd24/root/etc/httpd/.htpasswd"',
+    'RequestHeader unset Authorization',
+  ]
+
   case $::osfamily {
     'RedHat': {
       if $::operatingsystemmajrelease == '6' {
@@ -41,6 +47,7 @@ class openondemand::params {
           'rh-php56-php-ldap',
           'nodejs010',
           'nginx16',
+          'git19-git',
         ]
       } else {
         fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 for osfamily RedHat") # lint:ignore:140chars

@@ -79,11 +79,7 @@ class openondemand::apache {
   ::apache::mod { 'lua': }
   include ::apache::mod::headers
 
-  ::apache::custom_config { 'ood-portal':
-    content        => template('openondemand/apache/ood-portal.conf.erb'),
-    priority       => '10',
-    verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
-  }
+  realize(::Apache::Custom_config['ood-portal'])
 
   if $openondemand::_ood_auth_type == 'openid-connect' {
     # TODO: How to handle installing this module?

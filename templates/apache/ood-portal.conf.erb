@@ -1,123 +1,123 @@
-<%- use_virtual_host = !scope['openondemand::ood_ip'].empty? && !scope['openondemand::ood_server_name'].empty? -%>
+<%- use_virtual_host = !@ood_ip.empty? && !@ood_server_name.empty? -%>
 #
 # Open OnDemand Portal
 #
 
 <%- if use_virtual_host -%>
-<%- if scope['openondemand::ood_ssl'] && scope['openondemand::ood_ssl_redirect'] -%>
+<%- if @ood_ssl && @ood_ssl_redirect -%>
 # Redirect http => https
 #
-Listen <%= "#{scope['openondemand::ood_ip']}:80" %>
-<VirtualHost "<%= "#{scope['openondemand::ood_ip']}:80" %>">
-  ServerName "<%= scope['openondemand::ood_server_name'] %>"
-  <%- scope['openondemand::ood_server_aliases'].each do |server_alias| -%>
+Listen <%= "#{@ood_ip}:80" %>
+<VirtualHost "<%= "#{@ood_ip}:80" %>">
+  ServerName "<%= @ood_server_name %>"
+  <%- @ood_server_aliases.each do |server_alias| -%>
   ServerAlias "<%= server_alias %>"
   <%- end -%>
-  Redirect permanent / https://<%= scope['openondemand::ood_server_name'] %><%= ":#{scope['openondemand::ood_port']}" if scope['openondemand::ood_port'] != '443' %>/
+  Redirect permanent / https://<%= @ood_server_name %><%= ":#{@ood_port}" if @ood_port != '443' %>/
 </VirtualHost>
 <%- end -%>
 
-<%- if ! scope['openondemand::ood_server_aliases'].empty? -%>
-<VirtualHost "<%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %>">
-  ServerName "<%= scope['openondemand::ood_server_aliases'][0] %>"
-  <%- scope['openondemand::ood_server_aliases'][1..-1].each do |server_alias| -%>
+<%- if ! @ood_server_aliases.empty? -%>
+<VirtualHost "<%= "#{@ood_ip}:#{@ood_port}" %>">
+  ServerName "<%= @ood_server_aliases[0] %>"
+  <%- @ood_server_aliases[1..-1].each do |server_alias| -%>
   ServerAlias "<%= server_alias %>"
   <%- end -%>
-  <%- if scope['openondemand::ood_ssl'] -%>
+  <%- if @ood_ssl -%>
   SSLEngine On
-  SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
-  SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
-  <%- if scope['openondemand::ssl_certificate_chain_file'] -%>
-  SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
+  SSLCertificateFile <%= @ssl_certificate_file %>
+  SSLCertificateKeyFile <%= @ssl_certificate_key_file %>
+  <%- if @ssl_certificate_chain_file -%>
+  SSLCertificateChainFile <%= @ssl_certificate_chain_file %>
   <%- end -%>
   <%- end -%>
-  Redirect permanent / <%= scope['openondemand::ood_ssl'] ? 'https' : 'http' %>://<%= scope['openondemand::ood_server_name'] %>/
+  Redirect permanent / <%= @ood_ssl ? 'https' : 'http' %>://<%= @ood_server_name %>/
 </VirtualHost>
 <%- end -%>
 
 # Listen on specified ip and port
 #
-Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %><%= ' https' if scope['openondemand::ood_ssl'] %>
+Listen <%= "#{@ood_ip}:#{@ood_port}" %><%= ' https' if @ood_ssl %>
 
 # Generate OOD Portal VirutalHost
 #
-<VirtualHost "<%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}" %>">
+<VirtualHost "<%= "#{@ood_ip}:#{@ood_port}" %>">
 
   # Name that the server uses to identify itself
   #
-  ServerName "<%= scope['openondemand::ood_server_name'] %>"
+  ServerName "<%= @ood_server_name %>"
 
-  <%- if scope['openondemand::ood_logs'] -%>
+  <%- if @ood_logs -%>
   # Enable custom server logs
   #
-  ErrorLog logs/<%= scope['openondemand::ood_server_name'] %>_error.log
-  CustomLog logs/<%= scope['openondemand::ood_server_name'] %>_access.log combined
+  ErrorLog logs/<%= @ood_server_name %>_error.log
+  CustomLog logs/<%= @ood_server_name %>_access.log combined
   <%- end -%>
 
-  <%- if scope['openondemand::ood_ssl'] %>
+  <%- if @ood_ssl %>
   # Enable SSL support
   #
   SSLEngine On
-  SSLCertificateFile <%= scope['openondemand::ssl_certificate_file'] %>
-  SSLCertificateKeyFile <%= scope['openondemand::ssl_certificate_key_file'] %>
-  <%- if scope['openondemand::ssl_certificate_chain_file'] -%>
-  SSLCertificateChainFile <%= scope['openondemand::ssl_certificate_chain_file'] %>
+  SSLCertificateFile <%= @ssl_certificate_file %>
+  SSLCertificateKeyFile <%= @ssl_certificate_key_file %>
+  <%- if @ssl_certificate_chain_file -%>
+  SSLCertificateChainFile <%= @ssl_certificate_chain_file %>
   <%- end -%>
   <%- end -%>
 <%- end # End use_virtual_host -%>
 
-  <%- unless scope['openondemand::ood_lua_root'].empty? -%>
+  <%- unless @ood_lua_root.empty? -%>
   # Location of OOD Lua scripts
   #
-  LuaRoot "<%= scope['openondemand::ood_lua_root'] %>"
+  LuaRoot "<%= @ood_lua_root %>"
   <%- end %>
 
-  <%- unless scope['openondemand::ood_lua_log_level'].empty? -%>
+  <%- unless @ood_lua_log_level.empty? -%>
   # Log level for OOD Lua scripts
   #
-  LogLevel lua_module:<%= scope['openondemand::ood_lua_log_level'] %>
+  LogLevel lua_module:<%= @ood_lua_log_level %>
   <%- end -%>
 
   # Command used to map authenticated user to system user
   #
-  SetEnv OOD_USER_MAP_CMD "<%= scope['openondemand::ood_user_map_cmd'] %>"
+  SetEnv OOD_USER_MAP_CMD "<%= @ood_user_map_cmd %>"
 
   # Command used to stage & control PUNs (runs as sudo)
   #
-  SetEnv OOD_PUN_STAGE_CMD "<%= scope['openondemand::_ood_pun_stage_cmd_full'] %>"
+  SetEnv OOD_PUN_STAGE_CMD "<%= @_ood_pun_stage_cmd_full %>"
 
-  <%- if scope['openondemand::_ood_map_fail_uri'] && ! scope['openondemand::_ood_map_fail_uri'].empty? -%>
+  <%- if @_ood_map_fail_uri && ! @_ood_map_fail_uri.empty? -%>
   # Redirect user to this URI if fail to map to system user
-  SetEnv OOD_MAP_FAIL_URI "<%= scope['openondemand::_ood_map_fail_uri'] %>"
+  SetEnv OOD_MAP_FAIL_URI "<%= @_ood_map_fail_uri %>"
   <%- end %>
 
-  <%- unless scope['openondemand::ood_public_uri'].empty? -%>
+  <%- unless @ood_public_uri.empty? -%>
   # Serve up publicly available assets from local file system:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_public_uri'] %>/assets/images/osc-logo.png
-  #    #=> <%= scope['openondemand::ood_public_root'] %>/assets/images/osc-logo.png
+  #    https://<%= @ood_server_name %><%= @ood_public_uri %>/assets/images/osc-logo.png
+  #    #=> <%= @ood_public_root %>/assets/images/osc-logo.png
   #
-  Alias "<%= scope['openondemand::ood_public_uri'] %>" "<%= scope['openondemand::ood_public_root'] %>"
-  <Directory "<%= scope['openondemand::ood_public_root'] %>">
+  Alias "<%= @ood_public_uri %>" "<%= @ood_public_root %>"
+  <Directory "<%= @ood_public_root %>">
     Options Indexes FollowSymLinks
     AllowOverride None
     Require all granted
   </Directory>
   <%- end %>
 
-  <%- unless scope['openondemand::ood_node_uri'].empty? -%>
+  <%- unless @ood_node_uri.empty? -%>
   # Reverse proxy traffic to backend webserver through IP sockets:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/index.html
-  #    #=> http://HOST:PORT<%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/index.html
+  #    https://<%= @ood_server_name %><%= @ood_node_uri %>/HOST/PORT/index.html
+  #    #=> http://HOST:PORT<%= @ood_node_uri %>/HOST/PORT/index.html
   #
-  #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
-  #    #=> ws://HOST:PORT<%= scope['openondemand::ood_node_uri'] %>/HOST/PORT/socket.io
+  #    wss://<%= @ood_server_name %><%= @ood_node_uri %>/HOST/PORT/socket.io
+  #    #=> ws://HOST:PORT<%= @ood_node_uri %>/HOST/PORT/socket.io
   #
-  <LocationMatch "^<%= scope['openondemand::ood_node_uri'] %>/(?<host><%= scope['openondemand::ood_host_regex'] %>)/(?<port>\d+)">
-    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
+  <LocationMatch "^<%= @ood_node_uri %>/(?<host><%= @ood_host_regex %>)/(?<port>\d+)">
+    AuthType "<%= @_ood_auth_type %>"
     Require valid-user
-    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- @_ood_auth_extend.each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
@@ -129,89 +129,89 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
 
     # ProxyPassReverseCookiePath implementation
     Header edit* Set-Cookie ";\s*(?i)Path[^;]*" ""
-    Header edit  Set-Cookie "^([^;]+)" "$1; Path=<%= scope['openondemand::ood_node_uri'] %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
+    Header edit  Set-Cookie "^([^;]+)" "$1; Path=<%= @ood_node_uri %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
 
     LuaHookFixups node_proxy.lua node_proxy_handler
   </LocationMatch>
   <%- end -%>
 
-  <%- unless scope['openondemand::ood_rnode_uri'].empty? -%>
+  <%- unless @ood_rnode_uri.empty? -%>
   # Reverse "relative" proxy traffic to backend webserver through IP sockets:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_rnode_uri'] %>/HOST/PORT/index.html
+  #    https://<%= @ood_server_name %><%= @ood_rnode_uri %>/HOST/PORT/index.html
   #    #=> http://HOST:PORT/index.html
   #
-  #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_rnode_uri'] %>/HOST/PORT/socket.io
+  #    wss://<%= @ood_server_name %><%= @ood_rnode_uri %>/HOST/PORT/socket.io
   #    #=> ws://HOST:PORT/socket.io
   #
-  <LocationMatch "^<%= scope['openondemand::ood_rnode_uri'] %>/(?<host><%= scope['openondemand::ood_host_regex'] %>)/(?<port>\d+)(?<uri>/.*|)">
-    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
+  <LocationMatch "^<%= @ood_rnode_uri %>/(?<host><%= @ood_host_regex %>)/(?<port>\d+)(?<uri>/.*|)">
+    AuthType "<%= @_ood_auth_type %>"
     Require valid-user
-    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- @_ood_auth_extend.each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
     # ProxyPassReverse implementation
-    Header edit Location "^([^/]+//[^/]+)|(?=/)" "<%= scope['openondemand::ood_rnode_uri'] %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
+    Header edit Location "^([^/]+//[^/]+)|(?=/)" "<%= @ood_rnode_uri %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
 
     # ProxyPassReverseCookieDomain implemenation
     Header edit* Set-Cookie ";\s*(?i)Domain[^;]*" ""
 
     # ProxyPassReverseCookiePath implementation
     Header edit* Set-Cookie ";\s*(?i)Path[^;]*" ""
-    Header edit  Set-Cookie "^([^;]+)" "$1; Path=<%= scope['openondemand::ood_rnode_uri'] %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
+    Header edit  Set-Cookie "^([^;]+)" "$1; Path=<%= @ood_rnode_uri %>/%{MATCH_HOST}e/%{MATCH_PORT}e"
 
     LuaHookFixups node_proxy.lua node_proxy_handler
   </LocationMatch>
   <%- end -%>
 
-  <%- unless scope['openondemand::ood_pun_uri'].empty? -%>
+  <%- unless @ood_pun_uri.empty? -%>
   # Reverse proxy traffic to backend PUNs through Unix domain sockets:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_pun_uri'] %>/dev/app/simulations/1
-  #    #=> unix:/path/to/socket|http://localhost<%= scope['openondemand::ood_pun_uri'] %>/dev/app/simulations/1
+  #    https://<%= @ood_server_name %><%= @ood_pun_uri %>/dev/app/simulations/1
+  #    #=> unix:/path/to/socket|http://localhost<%= @ood_pun_uri %>/dev/app/simulations/1
   #
-  #    wss://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_pun_uri'] %>/shared/bob/app/socket
-  #    #=> unix:/path/to/socket|ws://localhost<%= scope['openondemand::ood_pun_uri'] %>/shared/bob/app/socket
+  #    wss://<%= @ood_server_name %><%= @ood_pun_uri %>/shared/bob/app/socket
+  #    #=> unix:/path/to/socket|ws://localhost<%= @ood_pun_uri %>/shared/bob/app/socket
   #
-  SetEnv OOD_PUN_URI "<%= scope['openondemand::ood_pun_uri'] %>"
-  <Location "<%= scope['openondemand::ood_pun_uri'] %>">
-    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
+  SetEnv OOD_PUN_URI "<%= @ood_pun_uri %>"
+  <Location "<%= @ood_pun_uri %>">
+    AuthType "<%= @_ood_auth_type %>"
     Require valid-user
-    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- @_ood_auth_extend.each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
-    SetEnv OOD_PUN_SOCKET_ROOT "<%= scope['openondemand::ood_pun_socket_root'] %>"
-    SetEnv OOD_PUN_MAX_RETRIES "<%= scope['openondemand::ood_pun_max_retries'] %>"
+    SetEnv OOD_PUN_SOCKET_ROOT "<%= @ood_pun_socket_root %>"
+    SetEnv OOD_PUN_MAX_RETRIES "<%= @ood_pun_max_retries %>"
     LuaHookFixups pun_proxy.lua pun_proxy_handler
-    ProxyPassReverse "http://localhost<%= scope['openondemand::ood_pun_uri'] %>"
-    ProxyPassReverseCookieDomain "localhost" "<%= scope['openondemand::ood_server_name'] %>"
+    ProxyPassReverse "http://localhost<%= @ood_pun_uri %>"
+    ProxyPassReverseCookieDomain "localhost" "<%= @ood_server_name %>"
 
     # ProxyPassReverseCookiePath implementation (less restrictive)
-    Header edit* Set-Cookie ";\s*(?i)Path\s*=(?-i)(?!\s*<%= scope['openondemand::ood_pun_uri'] %>)[^;]*" "; Path=<%= scope['openondemand::ood_pun_uri'] %>"
-    <%- if scope['openondemand::ood_analytics_opt_in'] -%>
+    Header edit* Set-Cookie ";\s*(?i)Path\s*=(?-i)(?!\s*<%= @ood_pun_uri %>)[^;]*" "; Path=<%= @ood_pun_uri %>"
+    <%- if @ood_analytics_opt_in -%>
 
-    SetEnv OOD_ANALYTICS_TRACKING_URL "<%= scope['openondemand::ood_analytics_tracking_url'] %>"
-    SetEnv OOD_ANALYTICS_TRACKING_ID "<%= scope['openondemand::ood_analytics_tracking_id'] %>"
+    SetEnv OOD_ANALYTICS_TRACKING_URL "<%= @ood_analytics_tracking_url %>"
+    SetEnv OOD_ANALYTICS_TRACKING_ID "<%= @ood_analytics_tracking_id %>"
     LuaHookLog analytics.lua analytics_handler
     <%- end -%>
   </Location>
   <%- end -%>
 
-  <%- unless scope['openondemand::ood_nginx_uri'].empty? -%>
+  <%- unless @ood_nginx_uri.empty? -%>
   # Control backend PUN for authenticated user:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_nginx_uri'] %>/stop
+  #    https://<%= @ood_server_name %><%= @ood_nginx_uri %>/stop
   #    #=> stops the authenticated user's PUN
   #
   # See mod_ood_proxy for more details.
   #
-  SetEnv OOD_NGINX_URI "<%= scope['openondemand::ood_nginx_uri'] %>"
-  <Location "<%= scope['openondemand::ood_nginx_uri'] %>">
-    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
+  SetEnv OOD_NGINX_URI "<%= @ood_nginx_uri %>"
+  <Location "<%= @ood_nginx_uri %>">
+    AuthType "<%= @_ood_auth_type %>"
     Require valid-user
-    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- @_ood_auth_extend.each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
 
@@ -219,57 +219,57 @@ Listen <%= "#{scope['openondemand::ood_ip']}:#{scope['openondemand::ood_port']}"
   </Location>
   <%- end -%>
 
-  <%- unless scope['openondemand::ood_root_uri'].empty? %>
+  <%- unless @ood_root_uri.empty? %>
   # Redirect root URI to specified URI
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %>/
-  #    #=> https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::ood_root_uri'] %>
+  #    https://<%= @ood_server_name %>/
+  #    #=> https://<%= @ood_server_name %><%= @ood_root_uri %>
   #
-  RedirectMatch ^/$ "<%= scope['openondemand::ood_root_uri'] %>"
+  RedirectMatch ^/$ "<%= @ood_root_uri %>"
   <%- end -%>
 
-  <%- if scope['openondemand::_ood_auth_oidc_uri'] && ! scope['openondemand::_ood_auth_oidc_uri'].empty? -%>
+  <%- if @_ood_auth_oidc_uri && ! @_ood_auth_oidc_uri.empty? -%>
   # OpenID Connect redirect URI:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_oidc_uri'] %>
+  #    https://<%= @ood_server_name %><%= @_ood_auth_oidc_uri %>
   #    #=> handled by mod_auth_openidc
   #
-  <Location "<%= scope['openondemand::_ood_auth_oidc_uri'] %>">
-    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
+  <Location "<%= @_ood_auth_oidc_uri %>">
+    AuthType "<%= @_ood_auth_type %>"
     Require valid-user
-    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- @_ood_auth_extend.each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
   </Location>
 
   <%- end -%>
-  <%- if scope['openondemand::_ood_auth_discover_uri'] && ! scope['openondemand::_ood_auth_discover_uri'].empty? -%>
+  <%- if @_ood_auth_discover_uri && ! @_ood_auth_discover_uri.empty? -%>
   # Discover URI for OpenID Connect (used for multiple Id Providers):
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_discover_uri'] %>
-  #    #=> <%= scope['openondemand::ood_auth_discover_root'] %>/
+  #    https://<%= @ood_server_name %><%= @_ood_auth_discover_uri %>
+  #    #=> <%= @ood_auth_discover_root %>/
   #
-  Alias "<%= scope['openondemand::_ood_auth_discover_uri'] %>" "<%= scope['openondemand::ood_auth_discover_root'] %>"
-  <Directory "<%= scope['openondemand::ood_auth_discover_root'] %>">
+  Alias "<%= @_ood_auth_discover_uri %>" "<%= @ood_auth_discover_root %>"
+  <Directory "<%= @ood_auth_discover_root %>">
     Options Indexes FollowSymLinks
     AllowOverride None
     Require all granted
   </Directory>
 
   <%- end -%>
-  <%- if scope['openondemand::_ood_auth_register_uri'] && ! scope['openondemand::_ood_auth_register_uri'].empty? -%>
+  <%- if @_ood_auth_register_uri && ! @_ood_auth_register_uri.empty? -%>
   # Register unmapped user to grid-mapfile here:
   #
-  #    https://<%= scope['openondemand::ood_server_name'] %><%= scope['openondemand::_ood_auth_register_uri'] %>
-  #    #=> <%= scope['openondemand::ood_auth_register_root'] %>/
+  #    https://<%= @ood_server_name %><%= @_ood_auth_register_uri %>
+  #    #=> <%= @ood_auth_register_root %>/
   #
-  Alias "<%= scope['openondemand::_ood_auth_register_uri'] %>" "<%= scope['openondemand::ood_auth_register_root'] %>"
-  <Directory "<%= scope['openondemand::ood_auth_register_root'] %>">
+  Alias "<%= @_ood_auth_register_uri %>" "<%= @ood_auth_register_root %>"
+  <Directory "<%= @ood_auth_register_root %>">
     Options Indexes FollowSymLinks
     AllowOverride None
-    AuthType "<%= scope['openondemand::_ood_auth_type'] %>"
+    AuthType "<%= @_ood_auth_type %>"
     Require valid-user
-    <%- scope['openondemand::_ood_auth_extend'].each do |ood_auth_extend| -%>
+    <%- @_ood_auth_extend.each do |ood_auth_extend| -%>
     <%= ood_auth_extend %>
     <%- end -%>
   </Directory>

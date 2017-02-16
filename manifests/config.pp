@@ -53,7 +53,7 @@ class openondemand::config {
     content => template('openondemand/ood_ruby.erb'),
   }
 
-  file { $openondemand::ood_public_root:
+  file { $openondemand::public_root:
     ensure => $openondemand::_public_ensure,
     target => $openondemand::_public_target,
     owner  => 'root',

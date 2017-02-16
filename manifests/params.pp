@@ -1,5 +1,5 @@
 # Private class.
-class openondemand::params {
+class openondemand::params ($auth_type = 'basic'){
 
   $nginx_stage_app_root = {
     'dev' => '~%{owner}/ondemand/%{env}/%{name}',
@@ -11,10 +11,11 @@ class openondemand::params {
     'ood' => { 'password' => 'ood' },
   }
 
-  $ood_auth_extend_basic = [
-    'AuthName "private"',
+  $auth_configs = [
+    'AuthName "Private"',
     'AuthUserFile "/opt/rh/httpd24/root/etc/httpd/.htpasswd"',
     'RequestHeader unset Authorization',
+    'Require valid-user',
   ]
 
   case $::osfamily {

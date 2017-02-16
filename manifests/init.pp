@@ -1,90 +1,74 @@
 # See README.md for more details.
 class openondemand (
-  $scl_packages                   = $openondemand::params::scl_packages,
-  $packages_ensure                = 'present',
-  $mod_ood_proxy_ensure           = undef,
-  $mod_ood_proxy_revision         = 'master',
-  $nginx_stage_ensure             = undef,
-  $nginx_stage_revision           = 'master',
-  $ood_auth_map_ensure            = undef,
-  $ood_auth_map_revision          = 'master',
-  $ood_auth_discovery_ensure      = undef,
-  $ood_auth_discovery_revision    = 'master',
-  $ood_auth_registration_ensure   = undef,
-  $ood_auth_registration_revision = 'master',
+  Array $scl_packages                             = $openondemand::params::scl_packages,
+  String $packages_ensure                         = 'present',
+  Optional[String] $mod_ood_proxy_ensure          = undef,
+  String $mod_ood_proxy_revision                  = 'master',
+  Optional[String] $nginx_stage_ensure            = undef,
+  String $nginx_stage_revision                    = 'master',
+  Optional[String] $ood_auth_map_ensure           = undef,
+  String $ood_auth_map_revision                   = 'master',
+  Optional[String] $ood_auth_discovery_ensure     = undef,
+  String $ood_auth_discovery_revision             = 'master',
+  Optional[String] $ood_auth_registration_ensure  = undef,
+  String $ood_auth_registration_revision          = 'master',
 
   # Apache
-  $declare_apache       = true,
+  Boolean $declare_apache = true,
 
-  $cilogon_client_id      = '',
-  $cilogon_client_secret  = '',
+  String $cilogon_client_id      = '',
+  String $cilogon_client_secret  = '',
+  String $oidc_crypto_passphrase  = 'CHANGEME',
 
   #
-  $ood_ip                           = $::ipaddress,
-  $ood_port                         = '443',
-  $ood_server_name                  = $::fqdn,
-  $ood_server_aliases               = [],
-  $ood_logs                         = true,
-  $ood_ssl                          = true,
-  $ood_ssl_redirect                 = true,
-  $ssl_certificate_file             = '/etc/pki/tls/certs/localhost.crt',
-  $ssl_certificate_key_file         = '/etc/pki/tls/private/localhost.key',
-  $ssl_certificate_chain_file       = undef,
+  Variant[Array, String, Undef] $listen_addr_port = undef,
+  Optional[String] $servername = undef,
+  Optional[Array] $ssl = undef,
+  String  $logroot = 'logs',
+  String $lua_root = '/opt/ood/mod_ood_proxy/lib',
+  Optional[String] $lua_log_level = undef,
+  String $user_map_cmd  = '/opt/ood/ood_auth_map/bin/ood_auth_map.regex',
+  Optional[String] $map_fail_uri = undef,
+  Enum['cilogon', 'shibboleth', 'ldap', 'basic'] $auth_type = 'basic',
+  Optional[Array] $auth_configs = $openondemand::params::auth_configs,
 
-  $ood_lua_root                     = '/opt/ood/mod_ood_proxy/lib',
-  $ood_lua_log_level                = 'info',
-  $ood_pun_stage_cmd                = '/opt/ood/nginx_stage/sbin/nginx_stage',
-  $ood_pun_stage_cmd_sudo           = true,
-  $ood_pun_max_retries              = '5',
-  $ood_user_map_cmd                 = '/opt/ood/ood_auth_map/bin/ood_auth_map.regex',
-  $ood_pun_socket_root              = '/var/run/nginx',
-  $ood_public_root                  = '/var/www/ood/public',
-  $ood_host_regex                   = '[^/]+',
+  String $root_uri = '/pun/sys/dashboard',
 
-  $ood_pun_uri                      = '/pun',
-  $ood_node_uri                     = '/node',
-  $ood_rnode_uri                    = '/rnode',
-  $ood_nginx_uri                    = '/nginx',
-  $ood_public_uri                   = '/public',
-  $ood_root_uri                     = '/pun/sys/dashboard',
+  Optional[Struct[{url => String, id => String}]] $analytics = undef,
 
-  $ood_auth_cilogon                 = false,
-  $ood_auth_oidc_uri                = undef,
-  $ood_auth_discover_root           = '/var/www/ood/discover',
-  $ood_auth_discover_uri            = undef,
-  $ood_auth_register_root           = '/var/www/ood/register',
-  $ood_auth_register_uri            = undef,
-  $ood_auth_type                    = undef,
-  $ood_auth_extend                  = undef,
-  $ood_map_fail_uri                 = undef,
+  String $public_uri = '/public',
+  String $public_root = '/var/www/ood/public',
 
-  $basic_auth_users                 = $openondemand::params::basic_auth_users,
-  $ood_auth_oidc_crypto_passphrase  = 'CHANGEME',
+  String $host_regex = '[^/]+',
+  Optional[String] $node_uri = undef,
+  Optional[String] $rnode_uri = undef,
 
-  $ood_analytics_opt_in             = false,
-  $ood_analytics_tracking_url       = 'http://www.google-analytics.com/collect',
-  $ood_analytics_tracking_id        = 'UA-79331310-4',
+  String $nginx_uri = '/nginx',
+  String $pun_uri = '/pun',
+  String $pun_socket_root = '/var/run/nginx',
+  Integer $pun_max_retries = 5,
 
-  $nginx_stage_app_root             = $openondemand::params::nginx_stage_app_root,
-  $nginx_stage_ood_ruby_scl         = 'nginx16 rh-passenger40 rh-ruby22 nodejs010 git19',
+  Optional[String] $oidc_uri = undef,
+  Optional[String] $oidc_discover_uri = undef,
+  Optional[String] $oidc_discover_root = undef,
 
-  $clusters = {},
-  $clusters_hiera_hash = true,
+  Optional[String] $register_uri = undef,
+  Optional[String] $register_root = undef,
 
-  $develop_root_dir = undef,
-  $usr_apps         = {},
-  $usr_app_defaults = {},
+  Hash $basic_auth_users  = $openondemand::params::basic_auth_users,
+
+  Hash $nginx_stage_app_root  = $openondemand::params::nginx_stage_app_root,
+  String $nginx_stage_ood_ruby_scl  = 'nginx16 rh-passenger40 rh-ruby22 nodejs010 git19',
+
+  Hash $clusters = {},
+  Boolean $clusters_hiera_hash = true,
+
+  Optional[String] $develop_root_dir = undef,
+  Variant[Array, Hash] $usr_apps  = {},
+  Hash $usr_app_defaults = {},
 ) inherits openondemand::params {
 
-  validate_array($ood_server_aliases)
-
-  if $ood_pun_stage_cmd_sudo {
-    $_ood_pun_stage_cmd_full = "sudo ${ood_pun_stage_cmd}"
-  } else {
-    $_ood_pun_stage_cmd_full = $ood_pun_stage_cmd
-  }
-
-  $_ood_web_directory = dirname($ood_public_root)
+  $_web_directory = dirname($public_root)
 
   $_mod_ood_proxy_ensure          = pick($mod_ood_proxy_ensure, $packages_ensure)
   $_nginx_stage_ensure            = pick($nginx_stage_ensure, $packages_ensure)
@@ -92,26 +76,34 @@ class openondemand (
   $_ood_auth_discovery_ensure     = pick($ood_auth_discovery_ensure, $packages_ensure)
   $_ood_auth_registration_ensure  = pick($ood_auth_registration_ensure, $packages_ensure)
 
+  if $ssl {
+    $port = '443'
+    $listen_ports = ['443', '80']
+  } else {
+    $port = '80'
+    $listen_ports = ['80']
+  }
+
+  $nginx_stage_cmd = '/opt/ood/nginx_stage/sbin/nginx_stage'
+  $pun_stage_cmd = "sudo ${nginx_stage_cmd}"
+
+  case $auth_type {
+    'ldap': {
+      $auth = ['AuthType basic'] + $auth_configs
+    }
+    'cilogon': {
+      $auth = ['AuthType openid-connect'] + $auth_configs
+    }
+    # Applies to basic and shibboleth
+    default: {
+      $auth = ["AuthType ${auth_type}"] + $auth_configs
+    }
+  }
+
   if $clusters_hiera_hash {
     $_clusters = hiera_hash('openondemand::clusters', {})
   } else {
     $_clusters = $clusters
-  }
-
-  if $ood_auth_cilogon {
-    $_ood_auth_oidc_uri     = pick($ood_auth_oidc_uri, '/oidc')
-    $_ood_auth_discover_uri = pick($ood_auth_discover_uri, '/discover')
-    $_ood_auth_register_uri = pick($ood_auth_register_uri, '/register')
-    $_ood_auth_type         = pick($ood_auth_type, 'openid-connect')
-    $_ood_auth_extend       = pick($ood_auth_extend, [])
-    $_ood_map_fail_uri      = pick($ood_map_fail_uri, $_ood_auth_register_uri)
-  } else {
-    $_ood_auth_oidc_uri     = pick($ood_auth_oidc_uri, false)
-    $_ood_auth_discover_uri = pick($ood_auth_discover_uri, false)
-    $_ood_auth_register_uri = pick($ood_auth_register_uri, false)
-    $_ood_auth_type         = pick($ood_auth_type, 'Basic')
-    $_ood_auth_extend       = pick($ood_auth_extend, $openondemand::params::ood_auth_extend_basic)
-    $_ood_map_fail_uri      = pick($ood_map_fail_uri, false)
   }
 
   if $develop_root_dir {

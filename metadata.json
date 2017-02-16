@@ -1,0 +1,18 @@
+{
+  "name": "osc-openondemand",
+  "version": "0.0.1",
+  "author": "osc",
+  "summary": "openondemand Puppet module",
+  "license": "Apache 2.0",
+  "source": "git://github.com/osc/puppet-module-openondemand.git",
+  "issues_url": "https://github.com/osc/puppet-module-openondemand/issues",
+  "project_page": "https://github.com/osc/puppet-module-openondemand",
+  "dependencies": [
+    { "name": "puppetlabs/stdlib", "version_requirement": ">= 3.2.0 < 5.0.0" },
+    { "name": "puppetlabs/apache", "version_requirement": ">= 1.11.0 < 2.0.0" },
+    { "name": "puppetlabs/vcsrepo", "version_requirement": ">= 1.3.0 < 2.0.0" },
+    { "name": "saz/sudo", "version_requirement": ">= 3.0.0 < 4.0.0" },
+    { "name": "jamtur01/httpauth", "version_requirement": ">= 0.0.3 < 1.0.0" }
+  ]
+}
+

@@ -39,6 +39,9 @@ class openondemand (
   String $public_uri = '/public',
   String $public_root = '/var/www/ood/public',
 
+  String $logout_uri = '/logout',
+  String $logout_redirect = '/pun/sys/dashboard/logout',
+
   String $host_regex = '[^/]+',
   Optional[String] $node_uri = undef,
   Optional[String] $rnode_uri = undef,

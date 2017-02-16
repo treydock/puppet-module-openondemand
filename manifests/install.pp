@@ -7,7 +7,7 @@ class openondemand::install {
   ensure_packages($openondemand::scl_packages)
 
   # Assumes /var/www - must create since httpd24 does not
-  $_web_directory_parent = dirname($openondemand::_ood_web_directory)
+  $_web_directory_parent = dirname($openondemand::_web_directory)
   if ! defined(File[$_web_directory_parent]) {
     file { $_web_directory_parent:
       ensure => 'directory',
@@ -17,13 +17,35 @@ class openondemand::install {
     }
   }
 
-  if ! defined(File[$openondemand::_ood_web_directory]) {
-    file { $openondemand::_ood_web_directory:
+  if ! defined(File[$openondemand::_web_directory]) {
+    file { $openondemand::_web_directory:
       ensure => 'directory',
       owner  => 'root',
       group  => 'root',
       mode   => '0755',
     }
+  }
+
+  file { "${openondemand::_web_directory}/apps":
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
+  file { "${openondemand::_web_directory}/apps/sys":
+    ensure => $openondemand::_sys_ensure,
+    target => $openondemand::_sys_target,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
+  file { "${openondemand::_web_directory}/apps/usr":
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
   }
 
   file { '/opt/ood':
@@ -48,32 +70,32 @@ class openondemand::install {
     revision => $openondemand::ood_auth_map_revision,
   }
 
-  if $openondemand::_ood_auth_discover_uri {
+  if $openondemand::oidc_discover_uri {
     if $openondemand::_develop_mode {
-      file { $openondemand::ood_auth_discover_root:
+      file { $openondemand::oidc_discover_root:
         ensure => 'link',
         target => $openondemand::_discover_target,
       }
     } else {
       openondemand::install::component { 'ood_auth_discovery':
         ensure         => $openondemand::_ood_auth_discovery_ensure,
-        path           => $openondemand::ood_auth_discover_root,
+        path           => $openondemand::oidc_discover_root,
         revision       => $openondemand::ood_auth_discovery_revision,
         install_method => 'none',
       }
     }
   }
 
-  if $openondemand::_ood_auth_register_uri {
+  if $openondemand::register_uri {
     if $openondemand::_develop_mode {
-      file { $openondemand::ood_auth_register_root:
+      file { $openondemand::register_root:
         ensure => 'link',
         target => $openondemand::_register_target,
       }
     } else {
       openondemand::install::component { 'ood_auth_registration':
         ensure         => $openondemand::_ood_auth_registration_ensure,
-        path           => $openondemand::ood_auth_register_root,
+        path           => $openondemand::register_root,
         revision       => $openondemand::ood_auth_registration_revision,
         install_method => 'none',
       }

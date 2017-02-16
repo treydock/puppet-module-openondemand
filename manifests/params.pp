@@ -1,5 +1,5 @@
 # Private class.
-class openondemand::params {
+class openondemand::params ($auth_type = 'basic'){
 
   $nginx_stage_app_root = {
     'dev' => '~%{owner}/ondemand/%{env}/%{name}',
@@ -10,6 +10,13 @@ class openondemand::params {
   $basic_auth_users = {
     'ood' => { 'password' => 'ood' },
   }
+
+  $auth_configs = [
+    'AuthName "Private"',
+    'AuthUserFile "/opt/rh/httpd24/root/etc/httpd/.htpasswd"',
+    'RequestHeader unset Authorization',
+    'Require valid-user',
+  ]
 
   case $::osfamily {
     'RedHat': {
@@ -41,6 +48,7 @@ class openondemand::params {
           'rh-php56-php-ldap',
           'nodejs010',
           'nginx16',
+          'git19-git',
         ]
       } else {
         fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 for osfamily RedHat") # lint:ignore:140chars

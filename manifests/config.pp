@@ -53,31 +53,9 @@ class openondemand::config {
     content => template('openondemand/ood_ruby.erb'),
   }
 
-  file { $openondemand::ood_public_root:
+  file { $openondemand::public_root:
     ensure => $openondemand::_public_ensure,
     target => $openondemand::_public_target,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
-  }
-
-  file { "${openondemand::_ood_web_directory}/apps":
-    ensure => 'directory',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
-  }
-
-  file { "${openondemand::_ood_web_directory}/apps/sys":
-    ensure => $openondemand::_sys_ensure,
-    target => $openondemand::_sys_target,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
-  }
-
-  file { "${openondemand::_ood_web_directory}/apps/usr":
-    ensure => 'directory',
     owner  => 'root',
     group  => 'root',
     mode   => '0755',

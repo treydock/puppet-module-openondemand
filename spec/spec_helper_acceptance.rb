@@ -1,5 +1,4 @@
-require 'beaker-rspec/spec_helper'
-require 'beaker-rspec/helpers/serverspec'
+require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 require 'beaker/module_install_helper'
 
@@ -15,18 +14,25 @@ RSpec.configure do |c|
   c.formatter = :documentation
 
   c.before :suite do
-    hosts.each do |host|
-      on host, puppet('module', 'install', 'puppetlabs-inifile'), { :acceptable_exit_codes => [0,1] }
+    hosts.each do |h|
+      install_puppet_module_via_pmt_on(h, :module_name => 'puppetlabs-inifile')
       puppet_pp = <<-EOF
       ini_setting { 'puppet.conf/main/show_diff':
         ensure  => 'present',
         section => 'main',
-        path    => '/etc/puppetlabs/puppet/puppet.conf',
+        path    => '/etc/puppet/puppet.conf',
         setting => 'show_diff',
         value   => 'true',
       }
+      ini_setting { 'puppet.conf/main/parser':
+        ensure  => 'present',
+        section => 'main',
+        path    => '/etc/puppet/puppet.conf',
+        setting => 'parser',
+        value   => 'future',
+      }
       EOF
-      apply_manifest_on(host, puppet_pp, :catch_failures => true)
+      apply_manifest_on(h, puppet_pp, :catch_failures => true)
     end
   end
 end

@@ -54,6 +54,11 @@ class openondemand (
   Optional[String] $oidc_uri = undef,
   Optional[String] $oidc_discover_uri = undef,
   Optional[String] $oidc_discover_root = undef,
+  Optional[String] $oidc_provider = undef,
+  Optional[String] $oidc_provider_token_endpoint_auth = undef,
+  String $oidc_provider_scope = 'openid email',
+  String $oidc_provider_client_id = '',
+  String $oidc_provider_client_secret = '',
 
   Optional[String] $register_uri = undef,
   Optional[String] $register_root = undef,
@@ -132,12 +137,12 @@ class openondemand (
   include openondemand::config
   include openondemand::service
 
-  anchor { 'openondemand::start': }->
-  Class['openondemand::install']->
-  Class['openondemand::apache']->
-  Class['openondemand::config']->
-  Class['openondemand::service']->
-  anchor { 'openondemand::end': }
+  anchor { 'openondemand::start': }
+  ->Class['openondemand::install']
+  ->Class['openondemand::apache']
+  ->Class['openondemand::config']
+  ->Class['openondemand::service']
+  ->anchor { 'openondemand::end': }
 
   create_resources('openondemand::cluster', $_clusters)
 

@@ -12,8 +12,8 @@ class openondemand::service {
       File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
       File['/opt/ood/nginx_stage/bin/ood_ruby'],
     ],
-  }->
-  exec { 'nginx_stage-app_reset-pun':
+  }
+  -> exec { 'nginx_stage-app_reset-pun':
     command     => '/opt/ood/nginx_stage/sbin/nginx_stage app_reset --sub-uri=/pun',
     refreshonly => true,
     subscribe   => [
@@ -21,8 +21,8 @@ class openondemand::service {
       File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
       File['/opt/ood/nginx_stage/bin/ood_ruby'],
     ],
-  }->
-  exec { 'nginx_stage-nginx_clean':
+  }
+  -> exec { 'nginx_stage-nginx_clean':
     command     => '/opt/ood/nginx_stage/sbin/nginx_stage nginx_clean',
     refreshonly => true,
     subscribe   => [

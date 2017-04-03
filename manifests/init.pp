@@ -137,12 +137,12 @@ class openondemand (
   include openondemand::config
   include openondemand::service
 
-  anchor { 'openondemand::start': }->
-  Class['openondemand::install']->
-  Class['openondemand::apache']->
-  Class['openondemand::config']->
-  Class['openondemand::service']->
-  anchor { 'openondemand::end': }
+  anchor { 'openondemand::start': }
+  ->Class['openondemand::install']
+  ->Class['openondemand::apache']
+  ->Class['openondemand::config']
+  ->Class['openondemand::service']
+  ->anchor { 'openondemand::end': }
 
   create_resources('openondemand::cluster', $_clusters)
 

@@ -135,8 +135,8 @@ class openondemand::apache {
         creates => "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider",
         require => File['/opt/rh/httpd24/root/etc/httpd/metadata'],
         notify  => Class['Apache::Service'],
-      }->
-      file { $oidc_provider_config:
+      }
+      ->file { $oidc_provider_config:
         ensure => 'file',
       }
     }

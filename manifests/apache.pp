@@ -90,11 +90,13 @@ class openondemand::apache {
     ::apache::mod { 'auth_openidc': }
 
     file { '/opt/rh/httpd24/root/etc/httpd/metadata':
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'apache',
-      mode   => '0750',
-      before => Apache::Custom_config['auth_openidc'],
+      ensure  => 'directory',
+      owner   => 'root',
+      group   => 'apache',
+      mode    => '0750',
+      recurse => true,
+      purge   => true,
+      before  => Apache::Custom_config['auth_openidc'],
     }
 
     file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.client':
@@ -111,6 +113,32 @@ class openondemand::apache {
       ensure  => 'file',
       content => template('openondemand/apache/cilogon.org.provider.erb'),
       notify  => Class['Apache::Service'],
+    }
+
+    if $openondemand::oidc_provider {
+      $oidc_provider_filename = regsubst($openondemand::oidc_provider, '/', '%2F', 'G')
+      $oidc_provider_config = "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider"
+      $oidc_config_url = "https://${openondemand::oidc_provider}/.well-known/openid-configuration"
+      file { "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.conf":
+        ensure  => 'file',
+        content => template('openondemand/apache/oidc-provider.conf.erb'),
+        notify  => Class['Apache::Service'],
+      }
+      file { "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.client":
+        ensure  => 'file',
+        content => template('openondemand/apache/oidc-provider.client.erb'),
+        notify  => Class['Apache::Service'],
+      }
+      exec { 'get oidc configuration':
+        path    => '/usr/bin:/bin:/usr/sbin:/sbin',
+        command => "curl --fail ${oidc_config_url} | python -m json.tool > ${oidc_provider_config}",
+        creates => "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider",
+        require => File['/opt/rh/httpd24/root/etc/httpd/metadata'],
+        notify  => Class['Apache::Service'],
+      }->
+      file { $oidc_provider_config:
+        ensure => 'file',
+      }
     }
 
     ::apache::custom_config { 'auth_openidc':

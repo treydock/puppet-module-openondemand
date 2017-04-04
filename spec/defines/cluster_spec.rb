@@ -20,16 +20,20 @@ describe 'openondemand::cluster' do
 
       let :params do
         {
-          :group_validators => {
-            'cluster' => {
+          :acls => [
+            {
+              'adapter' => 'group',
               'groups' => ['test-group'],
-              'allow' => true
-            },
-            'rsv_query' => {
+              'type' => 'whitelist',
+            }
+          ],
+          :rsv_query_acls => [
+            {
+              'adapter' => 'group',
               'groups' => ['test-group-rsv'],
-              'allow' => false
-            },
-          },
+              'type' => 'blacklist',
+            }
+          ],
           :login_server => 'login.test',
           :resource_mgr_host => 'batch.test',
           :resource_mgr_lib => '/opt/torque/lib64',

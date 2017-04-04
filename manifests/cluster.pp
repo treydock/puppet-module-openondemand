@@ -2,8 +2,14 @@
 define openondemand::cluster (
   $cluster_title = $name,
   $url = "http://${::domain}",
-  $group_validators = {},
   $hpc_cluster = true,
+  Array[
+    Struct[{
+      'adapter' => Enum['group'],
+      'groups'  => Optional[Array],
+      'type'    => Enum['whitelist', 'blacklist']
+    }]
+  ] $acls = [],
   $login_server = undef,
   $resource_mgr_type = 'torque',
   $resource_mgr_host = undef,
@@ -15,6 +21,13 @@ define openondemand::cluster (
   $scheduler_bin = undef,
   $scheduler_version = undef,
   $scheduler_params = {},
+  Array[
+    Struct[{
+      'adapter' => Enum['group'],
+      'groups'  => Optional[Array],
+      'type'    => Enum['whitelist', 'blacklist']
+    }]
+  ] $rsv_query_acls = [],
   $ganglia_host = undef,
   $ganglia_scheme = 'https://',
   $ganglia_segments = ['gweb', 'graph.php'],

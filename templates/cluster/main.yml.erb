@@ -2,17 +2,31 @@
 v1:
   title: "<%= @cluster_title %>"
   url: "<%= @url %>"
-<% if @group_validators && ! @group_validators.empty? -%>
+<% if ! @acls.empty? || ! @rsv_query_acls.empty? -%>
   validators:
-  <%- @group_validators.keys.sort.each do |gv| -%>
-    <%= gv %>:
+  <%- if ! @acls.empty? -%>
+    cluster:
+    <%- @acls.each do |acl| -%>
       - type: "OodAppkit::Validators::Groups"
         data:
           groups:
-          <%- @group_validators[gv]['groups'].each do |g| -%>
+          <%- acl['groups'].each do |g| -%>
             - "<%= g %>"
           <%- end -%>
-          allow: <%= @group_validators[gv]['allow'] %>
+          allow: <%= acl['type'] == 'whitelist' ? true : false %>
+    <%- end -%>
+  <%- end -%>
+  <%- if ! @rsv_query_acls.empty? -%>
+    rsv_query:
+    <%- @rsv_query_acls.each do |rsv_query_acl| -%>
+      - type: "OodAppkit::Validators::Groups"
+        data:
+          groups:
+          <%- rsv_query_acl['groups'].each do |g| -%>
+            - "<%= g %>"
+          <%- end -%>
+          allow: <%= rsv_query_acl['type'] == 'whitelist' ? true : false %>
+    <%- end -%>
   <%- end -%>
 <% end -%>
 <%- if @login_server || @resource_mgr_host || @scheduler_host || @ganglia_host -%>
@@ -74,15 +88,19 @@ v2:
     title: "<%= @cluster_title %>"
     url: "<%= @url %>"
     hidden: <%= !@hpc_cluster %>
-<% if @group_validators && @group_validators["cluster"] -%>
+<%- if ! @acls.empty? -%>
   acls:
-    - adapter: "group"
+  <%- @acls.each do |acl| -%>
+    - adapter: "<%= acl['adapter'] %>"
+    <%- if acl['groups'] -%>
       groups:
-      <%- @group_validators["cluster"]["groups"].each do |g| -%>
+      <%- acl["groups"].each do |g| -%>
         - "<%= g %>"
       <%- end -%>
-      type: "<%= @group_validators["cluster"]["allow"] ? "whitelist" : "blacklist" %>"
-<% end -%>
+    <%- end -%>
+      type: "<%= acl['type'] %>"
+  <%- end -%>
+<%- end -%>
 <% if @login_server -%>
   login:
     host: "<%= @login_server %>"
@@ -121,14 +139,18 @@ v2:
       moab_bin: "<%= @scheduler_bin %>"
       moab_version: "<%= @scheduler_version %>"
       moab_homedir: "<%= @scheduler_params["moabhomedir"] %>"
-    <%- if @group_validators && @group_validators["rsv_query"] -%>
+    <%- if ! @rsv_query_acls.empty? -%>
       acls:
-        - adapter: "group"
+      <%- @rsv_query_acls.each do |rsv_query_acl| -%>
+        - adapter: "<%= rsv_query_acl['adapter'] %>"
+        <%- if rsv_query_acl['groups'] -%>
           groups:
-          <%- @group_validators["rsv_query"]["groups"].each do |g| -%>
+          <%- rsv_query_acl["groups"].each do |g| -%>
             - "<%= g %>"
           <%- end -%>
-          type: "<%= @group_validators["rsv_query"]["allow"] ? "whitelist" : "blacklist" %>"
+        <%- end -%>
+          type: "<%= rsv_query_acl['type'] %>"
+      <%- end -%>
     <%- end -%>
   <%- end -%>
   <%- if @ganglia_host -%>

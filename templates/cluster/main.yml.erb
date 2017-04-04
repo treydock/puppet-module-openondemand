@@ -68,3 +68,85 @@ v1:
             version: "<%= @ganglia_version %>"
   <%- end -%>
 <%- end -%>
+
+v2:
+  metadata:
+    title: "<%= @cluster_title %>"
+    url: "<%= @url %>"
+    hidden: <%= !@hpc_cluster %>
+<% if @group_validators && @group_validators["cluster"] -%>
+  acls:
+    - adapter: "group"
+      groups:
+      <%- @group_validators["cluster"]["groups"].each do |g| -%>
+        - "<%= g %>"
+      <%- end -%>
+      type: "<%= @group_validators["cluster"]["allow"] ? "whitelist" : "blacklist" %>"
+<% end -%>
+<% if @login_server -%>
+  login:
+    host: "<%= @login_server %>"
+<% end -%>
+<% if @resource_mgr_host -%>
+  job:
+    adapter: "<%= @resource_mgr_type %>"
+    host: "<%= @resource_mgr_host %>"
+    lib: "<%= @resource_mgr_lib %>"
+    bin: "<%= @resource_mgr_bin %>"
+    version: "<%= @resource_mgr_version %>"
+<% end -%>
+<% if @resource_mgr_host || @scheduler_host || @ganglia_host -%>
+  custom:
+  <%- if @resource_mgr_host && @resource_mgr_type == "torque" -%>
+    pbs:
+      host: "<%= @resource_mgr_host %>"
+      lib: "<%= @resource_mgr_lib %>"
+      bin: "<%= @resource_mgr_bin %>"
+      version: "<%= @resource_mgr_version %>"
+  <%- end -%>
+  <%- if @scheduler_host && @scheduler_type == "moab" -%>
+    moab:
+      host: "<%= @scheduler_host %>"
+      bin: "<%= @scheduler_bin %>"
+      version: "<%= @scheduler_version %>"
+      homedir: "<%= @scheduler_params["moabhomedir"] %>"
+  <%- end -%>
+  <%- if @resource_mgr_host && @resource_mgr_type == "torque" && @scheduler_host && @scheduler_type == "moab" -%>
+    rsv_query:
+      torque_host: "<%= @resource_mgr_host %>"
+      torque_lib: "<%= @resource_mgr_lib %>"
+      torque_bin: "<%= @resource_mgr_bin %>"
+      torque_version: "<%= @resource_mgr_version %>"
+      moab_host: "<%= @scheduler_host %>"
+      moab_bin: "<%= @scheduler_bin %>"
+      moab_version: "<%= @scheduler_version %>"
+      moab_homedir: "<%= @scheduler_params["moabhomedir"] %>"
+    <%- if @group_validators && @group_validators["rsv_query"] -%>
+      acls:
+        - adapter: "group"
+          groups:
+          <%- @group_validators["rsv_query"]["groups"].each do |g| -%>
+            - "<%= g %>"
+          <%- end -%>
+          type: "<%= @group_validators["rsv_query"]["allow"] ? "whitelist" : "blacklist" %>"
+    <%- end -%>
+  <%- end -%>
+  <%- if @ganglia_host -%>
+    ganglia:
+      host: "<%= @ganglia_host %>"
+      scheme: "<%= @ganglia_scheme %>"
+      segments:
+      <%- @ganglia_segments.each do |gs| -%>
+        - "<%= gs %>"
+      <%- end -%>
+      req_query:
+      <%- @ganglia_req_query.each do |k, v| -%>
+        <%= k %>: "<%= v %>"
+      <%- end -%>
+      opt_query:
+      <%- @ganglia_opt_query.each do |k, v| -%>
+        <%= k %>: "<%= v %>"
+      <%- end -%>
+      version: "<%= @ganglia_version %>"
+  <%- end -%>
+<% end -%>

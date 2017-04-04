@@ -73,6 +73,7 @@ v2:
   metadata:
     title: "<%= @cluster_title %>"
     url: "<%= @url %>"
+    hidden: <%= !@hpc_cluster %>
 <% if @group_validators && @group_validators["cluster"] -%>
   acls:
     - adapter: "group"

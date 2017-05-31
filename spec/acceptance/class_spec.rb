@@ -5,7 +5,9 @@ describe 'openondemand class:' do
     it 'should run successfully' do
       pp =<<-EOS
       package { 'centos-release-scl': }->
-      class { 'openondemand': }
+      class { 'openondemand':
+        manage_app_installer => true,
+      }
       EOS
 
       apply_manifest(pp, :catch_failures => true)

@@ -13,6 +13,9 @@ class openondemand (
   String $ood_auth_discovery_revision             = 'master',
   Optional[String] $ood_auth_registration_ensure  = undef,
   String $ood_auth_registration_revision          = 'master',
+  Boolean $manage_app_installer                   = true,
+  Optional[String] $app_installer_ensure          = undef,
+  String $app_installer_revision                  = 'master',
 
   # Apache
   Boolean $declare_apache = true,
@@ -84,6 +87,7 @@ class openondemand (
   $_ood_auth_map_ensure           = pick($ood_auth_map_ensure, $packages_ensure)
   $_ood_auth_discovery_ensure     = pick($ood_auth_discovery_ensure, $packages_ensure)
   $_ood_auth_registration_ensure  = pick($ood_auth_registration_ensure, $packages_ensure)
+  $_app_installer_ensure          = pick($app_installer_ensure, $packages_ensure)
 
   if $ssl {
     $port = '443'
@@ -134,12 +138,14 @@ class openondemand (
   }
 
   include openondemand::install
+  include openondemand::apps
   include openondemand::apache
   include openondemand::config
   include openondemand::service
 
   anchor { 'openondemand::start': }
   ->Class['openondemand::install']
+  ->Class['openondemand::apps']
   ->Class['openondemand::apache']
   ->Class['openondemand::config']
   ->Class['openondemand::service']

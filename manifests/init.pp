@@ -1,5 +1,6 @@
 # See README.md for more details.
 class openondemand (
+  Array $package_dependencies                     = $openondemand::params::package_dependencies,
   Array $scl_packages                             = $openondemand::params::scl_packages,
   String $packages_ensure                         = 'present',
   Optional[String] $mod_ood_proxy_ensure          = undef,

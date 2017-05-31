@@ -1,0 +1,6 @@
+{
+<%- if scope['openondemand::oidc_provider_token_endpoint_auth'] -%>
+  "token_endpoint_auth": "<%= scope['openondemand::oidc_provider_token_endpoint_auth'] %>",
+<%- end -%>
+  "scope": "<%= scope['openondemand::oidc_provider_scope'] %>"
+}

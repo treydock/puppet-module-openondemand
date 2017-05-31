@@ -5,6 +5,7 @@ fixtures:
       ref: 4.11.0
     concat:
       repo: https://github.com/puppetlabs/puppetlabs-concat.git
+      ref: 2.2.1
     vcsrepo:
       repo: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
     apache:

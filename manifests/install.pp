@@ -4,6 +4,11 @@ class openondemand::install {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
+  $openondemand::package_dependencies.each |$package| {
+    if ! defined(Package[$package]) {
+      package { $package: ensure => 'present' }
+    }
+  }
   ensure_packages($openondemand::scl_packages)
 
   # Assumes /var/www - must create since httpd24 does not

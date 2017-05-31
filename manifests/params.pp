@@ -21,6 +21,9 @@ class openondemand::params ($auth_type = 'basic'){
   case $::osfamily {
     'RedHat': {
       if $::operatingsystemmajrelease == '6' {
+        $package_dependencies = [
+          'sqlite-devel'
+        ]
         $scl_packages = [
           'rh-ruby22',
           'rh-ruby22-ruby',

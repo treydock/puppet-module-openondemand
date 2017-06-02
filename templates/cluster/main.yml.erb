@@ -172,3 +172,12 @@ v2:
       version: "<%= @ganglia_version %>"
   <%- end -%>
 <% end -%>
+<% if @batch_connect -%>
+  batch_connect:
+    <%- @batch_connect.each do |script_type, options| -%>
+      <%= script_type %>:
+      <%- options.each do |option, value| -%>
+        <%= option %>: "<%= value %>"
+      <%- end -%>
+    <%- end -%>
+<% end -%>

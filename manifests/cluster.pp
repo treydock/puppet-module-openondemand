@@ -34,6 +34,12 @@ define openondemand::cluster (
   $ganglia_req_query = {'c' => $name},
   $ganglia_opt_query = {'h' => "%{h}.${::domain}"},
   $ganglia_version = '3',
+  #Optional[
+  #  Hash[Struct[{
+  #    'script_wrapper' => String
+  #  }]]
+  #] $batch_connect = undef,
+  Optional[Hash] $batch_connect = undef,
 ) {
 
   include openondemand

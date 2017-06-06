@@ -14,19 +14,19 @@ class openondemand::app::installer {
       require  => File['/opt/ood'],
       notify   => [
         Exec['ood-apps-installer-rake'],
-        Exec['ood-apps-installer-rake-install'],
       ],
     }
 
     exec { 'ood-apps-installer-rake':
       path        => '/usr/bin:/bin:/usr/sbin:/sbin',
+      environment => ['HOME=/dev/null'],
       cwd         => '/opt/ood/src/apps',
       command     => 'scl enable rh-ruby22 nodejs010 git19 -- rake',
       logoutput   => true,
       refreshonly => true,
       timeout     => 1200,
     }
-    ->exec { 'ood-apps-installer-rake-install':
+    ~>exec { 'ood-apps-installer-rake-install':
       path        => '/usr/bin:/bin:/usr/sbin:/sbin',
       cwd         => '/opt/ood/src/apps',
       command     => 'scl enable rh-ruby22 -- rake install',

@@ -19,7 +19,10 @@ class openondemand::app::installer {
 
     exec { 'ood-apps-installer-rake':
       path        => '/usr/bin:/bin:/usr/sbin:/sbin',
-      environment => ['HOME=/dev/null'],
+      environment => delete_undef_values([
+        'HOME=/dev/null',
+        $openondemand::default_sshhost_env
+      ]),
       cwd         => '/opt/ood/src/apps',
       command     => 'scl enable rh-ruby22 nodejs010 git19 -- rake',
       logoutput   => true,

@@ -74,6 +74,7 @@ class openondemand (
 
   Hash $clusters = {},
   Boolean $clusters_hiera_hash = true,
+  Optional[String] $default_sshhost = undef,
 
   Optional[String] $develop_root_dir = undef,
   Variant[Array, Hash] $usr_apps  = {},
@@ -117,6 +118,12 @@ class openondemand (
     $_clusters = hiera_hash('openondemand::clusters', {})
   } else {
     $_clusters = $clusters
+  }
+
+  if $default_sshhost {
+    $default_sshhost_env = "DEFAULT_SSHHOST=${default_sshhost}"
+  } else {
+    $default_sshhost_env = undef
   }
 
   if $develop_root_dir {

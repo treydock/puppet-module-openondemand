@@ -63,6 +63,7 @@ class openondemand (
   String $oidc_provider_scope = 'openid email',
   String $oidc_provider_client_id = '',
   String $oidc_provider_client_secret = '',
+  Optional[String] $oidc_remote_user_claim = undef,
 
   Optional[String] $register_uri = undef,
   Optional[String] $register_root = undef,

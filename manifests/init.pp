@@ -33,7 +33,7 @@ class openondemand (
   Optional[String] $lua_log_level = undef,
   String $user_map_cmd  = '/opt/ood/ood_auth_map/bin/ood_auth_map.regex',
   Optional[String] $map_fail_uri = undef,
-  Enum['cilogon', 'shibboleth', 'ldap', 'basic'] $auth_type = 'basic',
+  Enum['cilogon', 'openid-connect', 'shibboleth', 'ldap', 'basic'] $auth_type = 'basic',
   Optional[Array] $auth_configs = $openondemand::params::auth_configs,
 
   String $root_uri = '/pun/sys/dashboard',
@@ -63,6 +63,7 @@ class openondemand (
   String $oidc_provider_scope = 'openid email',
   String $oidc_provider_client_id = '',
   String $oidc_provider_client_secret = '',
+  Optional[String] $oidc_remote_user_claim = undef,
 
   Optional[String] $register_uri = undef,
   Optional[String] $register_root = undef,
@@ -108,7 +109,7 @@ class openondemand (
     'cilogon': {
       $auth = ['AuthType openid-connect'] + $auth_configs
     }
-    # Applies to basic and shibboleth
+    # Applies to basic, shibboleth, and openid-connect
     default: {
       $auth = ["AuthType ${auth_type}"] + $auth_configs
     }

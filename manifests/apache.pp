@@ -85,7 +85,7 @@ class openondemand::apache {
 
   realize(::Apache::Custom_config['ood-portal'])
 
-  if $openondemand::auth_type == 'cilogon' {
+  if $openondemand::auth_type in ['cilogon', 'openid-connect'] {
     # TODO: How to handle installing this module?
     ::apache::mod { 'auth_openidc': }
 
@@ -99,6 +99,20 @@ class openondemand::apache {
       before  => Apache::Custom_config['auth_openidc'],
     }
 
+    ::apache::custom_config { 'auth_openidc':
+      content        => template('openondemand/apache/auth_openidc.conf.erb'),
+      priority       => false,
+      verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
+    }
+    # Hack to set mode of auth_openidc.conf
+    File <| title == 'apache_auth_openidc' |> {
+      owner => 'root',
+      group => 'apache',
+      mode  => '0640',
+    }
+  }
+
+  if $openondemand::auth_type == 'cilogon' {
     file { '/opt/rh/httpd24/root/etc/httpd/metadata/cilogon.org.client':
       ensure  => 'file',
       content => template('openondemand/apache/cilogon.org.client.erb'),
@@ -114,43 +128,31 @@ class openondemand::apache {
       content => template('openondemand/apache/cilogon.org.provider.erb'),
       notify  => Class['Apache::Service'],
     }
+  }
 
-    if $openondemand::oidc_provider {
-      $oidc_provider_filename = regsubst($openondemand::oidc_provider, '/', '%2F', 'G')
-      $oidc_provider_config = "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider"
-      $oidc_config_url = "https://${openondemand::oidc_provider}/.well-known/openid-configuration"
-      file { "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.conf":
-        ensure  => 'file',
-        content => template('openondemand/apache/oidc-provider.conf.erb'),
-        notify  => Class['Apache::Service'],
-      }
-      file { "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.client":
-        ensure  => 'file',
-        content => template('openondemand/apache/oidc-provider.client.erb'),
-        notify  => Class['Apache::Service'],
-      }
-      exec { 'get oidc configuration':
-        path    => '/usr/bin:/bin:/usr/sbin:/sbin',
-        command => "curl --fail ${oidc_config_url} | python -m json.tool > ${oidc_provider_config}",
-        creates => "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider",
-        require => File['/opt/rh/httpd24/root/etc/httpd/metadata'],
-        notify  => Class['Apache::Service'],
-      }
-      ->file { $oidc_provider_config:
-        ensure => 'file',
-      }
+  if $openondemand::auth_type == 'openid-connect' or $openondemand::oidc_provider {
+    $oidc_provider_filename = regsubst($openondemand::oidc_provider, '/', '%2F', 'G')
+    $oidc_provider_config = "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider"
+    $oidc_config_url = "https://${openondemand::oidc_provider}/.well-known/openid-configuration"
+    file { "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.conf":
+      ensure  => 'file',
+      content => template('openondemand/apache/oidc-provider.conf.erb'),
+      notify  => Class['Apache::Service'],
     }
-
-    ::apache::custom_config { 'auth_openidc':
-      content        => template('openondemand/apache/auth_openidc.conf.erb'),
-      priority       => false,
-      verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
+    file { "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.client":
+      ensure  => 'file',
+      content => template('openondemand/apache/oidc-provider.client.erb'),
+      notify  => Class['Apache::Service'],
     }
-    # Hack to set mode of auth_openidc.conf
-    File <| title == 'apache_auth_openidc' |> {
-      owner => 'root',
-      group => 'apache',
-      mode  => '0640',
+    exec { 'get oidc configuration':
+      path    => '/usr/bin:/bin:/usr/sbin:/sbin',
+      command => "curl --fail ${oidc_config_url} | python -m json.tool > ${oidc_provider_config}",
+      creates => "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider",
+      require => File['/opt/rh/httpd24/root/etc/httpd/metadata'],
+      notify  => Class['Apache::Service'],
+    }
+    ->file { $oidc_provider_config:
+      ensure => 'file',
     }
   }
 

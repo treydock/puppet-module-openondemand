@@ -9,6 +9,11 @@ OIDCCryptoPassphrase "<%= scope['openondemand::oidc_crypto_passphrase'] %>"
 OIDCSessionInactivityTimeout 28800
 OIDCSessionMaxDuration 28800
 
+<%- if scope['openondemand::oidc_remote_user_claim'] -%>
+# Set REMOTE_USER
+OIDCRemoteUserClaim <%= scope['openondemand::oidc_remote_user_claim'] %>
+
+<%- end -%>
 # Don't pass claims to backend servers
 OIDCPassClaimsAs environment
 

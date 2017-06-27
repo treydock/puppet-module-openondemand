@@ -130,7 +130,7 @@ class openondemand::apache {
     }
   }
 
-  if $openondemand::auth_type == 'openid-connect' or $openondemand::oidc_provider {
+  if $openondemand::auth_type == 'cilogon' and $openondemand::oidc_provider {
     $oidc_provider_filename = regsubst($openondemand::oidc_provider, '/', '%2F', 'G')
     $oidc_provider_config = "/opt/rh/httpd24/root/etc/httpd/metadata/${oidc_provider_filename}.provider"
     $oidc_config_url = "https://${openondemand::oidc_provider}/.well-known/openid-configuration"

@@ -1,6 +1,14 @@
 # File managed by Puppet - do not edit !
 #
+<%- if scope['openondemand::auth_type'] == 'cilogon' -%>
 OIDCMetadataDir      /opt/rh/httpd24/root/etc/httpd/metadata
+<%- else -%>
+<%- if scope['openondemand::oidc_provider'] -%>
+OIDCProviderMetadataURL <%= scope['openondemand::oidc_provider'] %>/.well-known/openid-configuration
+<%- end -%>
+OIDCClientID        "<%= scope['openondemand::oidc_provider_client_id'] %>"
+OIDCClientSecret    "<%= scope['openondemand::oidc_provider_client_secret'] %>"
+<%- end -%>
 <%- if scope['openondemand::oidc_discover_uri'] -%>
 OIDCDiscoverURL      https://<%= scope['openondemand::servername'] %><%= scope['openondemand::oidc_discover_uri'] %>
 <%- end -%>

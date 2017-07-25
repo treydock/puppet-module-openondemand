@@ -32,6 +32,7 @@ class openondemand (
   String $lua_root = '/opt/ood/mod_ood_proxy/lib',
   Optional[String] $lua_log_level = undef,
   String $user_map_cmd  = '/opt/ood/ood_auth_map/bin/ood_auth_map.regex',
+  Optional[String] $user_env = undef,
   Optional[String] $map_fail_uri = undef,
   Enum['cilogon', 'openid-connect', 'shibboleth', 'ldap', 'basic'] $auth_type = 'basic',
   Optional[Array] $auth_configs = $openondemand::params::auth_configs,

@@ -75,7 +75,11 @@ class openondemand (
 
   Hash $clusters = {},
   Boolean $clusters_hiera_hash = true,
+
+  # Used by openondemand::app::installer
   Optional[String] $default_sshhost = undef,
+  Optional[String] $ood_site = undef,
+  Boolean $install_bc_desktop = false,
 
   Optional[String] $develop_root_dir = undef,
   Variant[Array, Hash] $usr_apps  = {},
@@ -126,6 +130,17 @@ class openondemand (
   } else {
     $default_sshhost_env = undef
   }
+
+  if $ood_site {
+    $ood_site_env = "OOD_SITE=${ood_site}"
+  } else {
+    $ood_site_env = undef
+  }
+
+  $app_installer_env = delete_undef_values([
+    $default_sshhost_env,
+    $ood_site_env
+  ])
 
   if $develop_root_dir {
     $_develop_mode = true

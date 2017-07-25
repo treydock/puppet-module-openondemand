@@ -7,6 +7,7 @@ describe 'openondemand class:' do
       package { 'centos-release-scl': }->
       class { 'openondemand':
         manage_app_installer => true,
+        install_bc_desktop   => true,
       }
       EOS
 

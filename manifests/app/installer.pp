@@ -27,7 +27,7 @@ class openondemand::app::installer {
 
     exec { 'ood-apps-installer-rake':
       path        => '/usr/bin:/bin:/usr/sbin:/sbin',
-      environment => $openondemand::app_installer_env,
+      environment => $openondemand::default_sshhost_env,
       cwd         => '/opt/ood/src/apps',
       command     => 'scl enable rh-ruby22 nodejs010 git19 -- rake HOME=$(mktemp -d)',
       logoutput   => true,
@@ -45,7 +45,7 @@ class openondemand::app::installer {
     if $openondemand::install_bc_desktop {
       exec { 'ood-apps-installer-rake-build-bc_desktop':
         path        => '/usr/bin:/bin:/usr/sbin:/sbin',
-        environment => $openondemand::app_installer_env,
+        environment => $openondemand::bc_desktop_ood_site_env,
         cwd         => '/opt/ood/src/apps',
         command     => 'scl enable rh-ruby22 nodejs010 git19 -- rake build:bc_desktop HOME=$(mktemp -d)',
         logoutput   => true,

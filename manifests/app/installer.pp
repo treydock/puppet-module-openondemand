@@ -64,6 +64,16 @@ class openondemand::app::installer {
         refreshonly => true,
       }
     }
+
+    if $openondemand::dashboard_config {
+      file { "${openondemand::_web_directory}/apps/sys/dashboard/.env.local":
+        ensure  => 'file',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template('openondemand/dashboard.env.local.erb'),
+      }
+    }
   }
 
 }

@@ -81,6 +81,7 @@ class openondemand (
   Optional[String] $default_sshhost = undef,
   Optional[String] $bc_desktop_ood_site = undef,
   Boolean $install_bc_desktop = false,
+  Optional[Hash] $dashboard_config = undef,
 
   Optional[String] $develop_root_dir = undef,
   Variant[Array, Hash] $usr_apps  = {},

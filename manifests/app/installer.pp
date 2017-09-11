@@ -72,6 +72,7 @@ class openondemand::app::installer {
         group   => 'root',
         mode    => '0644',
         content => template('openondemand/dashboard.env.local.erb'),
+        require => Exec['ood-apps-installer-rake-install'],
       }
     }
   }

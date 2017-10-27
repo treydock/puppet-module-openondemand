@@ -9,8 +9,8 @@ class openondemand::service {
     refreshonly => true,
     subscribe   => [
       Openondemand::Install::Component['nginx_stage'],
-      File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
-      File['/opt/ood/nginx_stage/bin/ood_ruby'],
+      File['/etc/ood/config/nginx_stage.yml'],
+      File['/etc/ood/profile'],
     ],
   }
   -> exec { 'nginx_stage-app_reset-pun':
@@ -18,8 +18,8 @@ class openondemand::service {
     refreshonly => true,
     subscribe   => [
       Openondemand::Install::Component['nginx_stage'],
-      File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
-      File['/opt/ood/nginx_stage/bin/ood_ruby'],
+      File['/etc/ood/config/nginx_stage.yml'],
+      File['/etc/ood/profile'],
     ],
   }
   -> exec { 'nginx_stage-nginx_clean':
@@ -27,8 +27,8 @@ class openondemand::service {
     refreshonly => true,
     subscribe   => [
       Openondemand::Install::Component['nginx_stage'],
-      File['/opt/ood/nginx_stage/config/nginx_stage.yml'],
-      File['/opt/ood/nginx_stage/bin/ood_ruby'],
+      File['/etc/ood/config/nginx_stage.yml'],
+      File['/etc/ood/profile'],
     ],
   }
 

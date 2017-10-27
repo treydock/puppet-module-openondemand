@@ -37,7 +37,7 @@ class openondemand::config {
   #  value  => $openondemand::nginx_stage_app_root,
   #}
 
-  file { '/opt/ood/nginx_stage/config/nginx_stage.yml':
+  file { '/etc/ood/config/nginx_stage.yml':
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
@@ -45,12 +45,16 @@ class openondemand::config {
     content => template('openondemand/nginx_stage.yml.erb'),
   }
 
-  file { '/opt/ood/nginx_stage/bin/ood_ruby':
+  file { '/etc/ood/profile':
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
-    mode    => '0755',
-    content => template('openondemand/ood_ruby.erb'),
+    mode    => '0644',
+    content => template('openondemand/profile.erb'),
+  }
+
+  file { '/opt/ood/nginx_stage/config/nginx_stage.yml':
+    ensure => 'absent',
   }
 
   file { $openondemand::public_root:

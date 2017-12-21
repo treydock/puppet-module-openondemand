@@ -122,7 +122,7 @@ class openondemand (
   }
 
   if $clusters_hiera_hash {
-    $_clusters = hiera_hash('openondemand::clusters', {})
+    $_clusters = lookup('openondemand::clusters', Hash, 'deep', {})
   } else {
     $_clusters = $clusters
   }

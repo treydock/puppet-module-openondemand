@@ -86,6 +86,12 @@ class openondemand (
   Optional[String] $develop_root_dir = undef,
   Variant[Array, Hash] $usr_apps  = {},
   Hash $usr_app_defaults = {},
+
+  Boolean $manage_apps_config = true,
+  Optional[String] $apps_config_repo = undef,
+  Optional[String] $apps_config_revision = undef,
+  String $apps_config_repo_path = '',
+  Optional[String] $apps_config_source = undef,
 ) inherits openondemand::params {
 
   $_web_directory = dirname($public_root)

@@ -32,14 +32,16 @@ class openondemand::config {
     $apps_config_source = $openondemand::apps_config_source
   }
 
-  file { '/etc/ood/config/apps':
-    ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
-    source  => $apps_config_source,
-    recurse => true,
-    purge   => true,
-    force   => true,
+  if $openondemand::manage_apps_config {
+    file { '/etc/ood/config/apps':
+      ensure  => 'directory',
+      owner   => 'root',
+      group   => 'root',
+      source  => $apps_config_source,
+      recurse => true,
+      purge   => true,
+      force   => true,
+    }
   }
 
   file { '/etc/ood/config/clusters.d':

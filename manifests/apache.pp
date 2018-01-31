@@ -39,10 +39,6 @@ class openondemand::apache {
     #include ::apache::mod::passenger
   }
 
-  if $openondemand::listen_ports and ! $openondemand::listen_addr_port {
-    ::apache::listen { $openondemand::listen_ports: }
-  }
-
   ::apache::mod { 'session':
     package => 'httpd24-mod_session',
     #loadfile_name => '01-session.conf',

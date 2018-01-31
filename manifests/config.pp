@@ -57,12 +57,13 @@ class openondemand::config {
     recurse => true,
   }
 
+  $ood_portal_yaml = to_yaml($openondemand::ood_portal_config)
   file { '/etc/ood/config/ood_portal.yml':
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => to_yaml($openondemand::ood_portal_config),
+    content => "# File managed by Puppet - do not edit!\n${ood_portal_yaml}",
     notify  => Exec['ood-portal-generator-generate'],
   }
 

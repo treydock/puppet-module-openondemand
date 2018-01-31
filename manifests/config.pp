@@ -18,7 +18,10 @@ class openondemand::config {
     mode   => '0755',
   }
 
-  if $openondemand::manage_apps_config and $openondemand::apps_config_repo {
+  if $openondemand::apps_config_target {
+    $apps_config_ensure = 'link'
+    $apps_config_source = undef
+  } elsif $openondemand::manage_apps_config and $openondemand::apps_config_repo {
     vcsrepo { '/opt/ood-apps-config':
       ensure   => 'latest',
       provider => 'git',
@@ -27,21 +30,22 @@ class openondemand::config {
       user     => 'root',
       before   => File['/etc/ood/config/apps'],
     }
+    $apps_config_ensure = 'directory'
     $apps_config_source = "/opt/ood-apps-config/${openondemand::apps_config_repo_path}"
   } else {
+    $apps_config_ensure = 'directory'
     $apps_config_source = $openondemand::apps_config_source
   }
 
-  if $openondemand::manage_apps_config {
-    file { '/etc/ood/config/apps':
-      ensure  => 'directory',
-      owner   => 'root',
-      group   => 'root',
-      source  => $apps_config_source,
-      recurse => true,
-      purge   => true,
-      force   => true,
-    }
+  file { '/etc/ood/config/apps':
+    ensure  => $apps_config_ensure,
+    target  => $openondemand::apps_config_target,
+    owner   => 'root',
+    group   => 'root',
+    source  => $apps_config_source,
+    recurse => true,
+    purge   => true,
+    force   => true,
   }
 
   file { '/etc/ood/config/clusters.d':

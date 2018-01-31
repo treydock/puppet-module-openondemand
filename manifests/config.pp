@@ -57,6 +57,27 @@ class openondemand::config {
     recurse => true,
   }
 
+  file { '/etc/ood/config/ood_portal.yml':
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => to_yaml($openondemand::ood_portal_config),
+    notify  => Exec['ood-portal-generator-generate'],
+  }
+
+  exec { 'ood-portal-generator-generate':
+    command     => '/opt/ood/ood-portal-generator/bin/generate -o /etc/ood/config/ood-portal.conf',
+    refreshonly => true,
+    before      => ::Apache::Custom_config['ood-portal'],
+  }
+
+  ::apache::custom_config { 'ood-portal':
+    source         => '/etc/ood/config/ood-portal.conf',
+    priority       => '10',
+    verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
+  }
+
   #Yaml_setting <| tag == 'nginx_stage' |> {
   #  target =>
   #}

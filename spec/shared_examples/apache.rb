@@ -1,6 +1,6 @@
 shared_context "openondemand::apache" do
   it do
-    content = catalogue.resource('apache::custom_config', 'ood-portal').send(:parameters)[:content]
+    content = catalogue.resource('file', '/etc/ood/config/ood_portal.yml').send(:parameters)[:content]
     puts content
   end
 end

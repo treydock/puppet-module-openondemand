@@ -83,8 +83,6 @@ class openondemand::apache {
   ::apache::mod { 'lua': }
   include ::apache::mod::headers
 
-  realize(::Apache::Custom_config['ood-portal'])
-
   if $openondemand::auth_type in ['cilogon', 'openid-connect'] {
     # TODO: How to handle installing this module?
     ::apache::mod { 'auth_openidc': }

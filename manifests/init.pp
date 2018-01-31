@@ -3,6 +3,8 @@ class openondemand (
   Array $package_dependencies                     = $openondemand::params::package_dependencies,
   Array $scl_packages                             = $openondemand::params::scl_packages,
   String $packages_ensure                         = 'present',
+  Optional[String] $ood_portal_generator_ensure   = undef,
+  String $ood_portal_generator_revision           = 'master',
   Optional[String] $mod_ood_proxy_ensure          = undef,
   String $mod_ood_proxy_revision                  = 'master',
   Optional[String] $nginx_stage_ensure            = undef,
@@ -97,6 +99,7 @@ class openondemand (
 
   $_web_directory = dirname($public_root)
 
+  $_ood_portal_generator_ensure   = pick($ood_portal_generator_ensure, $packages_ensure)
   $_mod_ood_proxy_ensure          = pick($mod_ood_proxy_ensure, $packages_ensure)
   $_nginx_stage_ensure            = pick($nginx_stage_ensure, $packages_ensure)
   $_ood_auth_map_ensure           = pick($ood_auth_map_ensure, $packages_ensure)
@@ -164,6 +167,39 @@ class openondemand (
     $_register_target = undef
   }
 
+  $ood_portal_config = delete_undef_values({
+    'listen_addr_port'    => $listen_ports,
+    'servername'          => $servername,
+    'port'                => $port,
+    'ssl'                 => $ssl,
+    'logroot'             => $logroot,
+    'lua_root'            => $lua_root,
+    'lua_log_level'       => $lua_log_level,
+    'user_map_cmd'        => $user_map_cmd,
+    'user_env'            => $user_env,
+    'map_fail_uri'        => $map_fail_uri,
+    'pun_stage_cmd'       => $pun_stage_cmd,
+    'auth'                => $auth,
+    'root_uri'            => $root_uri,
+    'analytics'           => $analytics,
+    'public_uri'          => $public_uri,
+    'public_root'         => $public_root,
+    'logout_uri'          => $logout_uri,
+    'logout_redirect'     => $logout_redirect,
+    'host_regex'          => $host_regex,
+    'node_uri'            => $node_uri,
+    'rnode_uri'           => $rnode_uri,
+    'nginx_uri'           => $nginx_uri,
+    'pun_uri'             => $pun_uri,
+    'pun_socket_root'     => $pun_socket_root,
+    'pun_max_retries'     => $pun_max_retries,
+    'oidc_uri'            => $oidc_uri,
+    'oidc_discover_uri'   => $oidc_discover_uri,
+    'oidc_discover_root'  => $oidc_discover_root,
+    'register_uri'        => $register_uri,
+    'register_root'       => $register_root,
+  })
+
   include openondemand::install
   include openondemand::apps
   include openondemand::apache
@@ -186,13 +222,6 @@ class openondemand (
     create_resources('openondemand::app::usr', $usr_apps, $usr_app_defaults)
   } else {
     fail("${module_name}: usr_apps must be an array or hash.")
-  }
-
-  # Allow templates to get scope of openondemand class
-  @::apache::custom_config { 'ood-portal':
-    content        => template('openondemand/apache/ood-portal.conf.erb'),
-    priority       => '10',
-    verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
   }
 
 }

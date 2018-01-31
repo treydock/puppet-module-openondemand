@@ -60,6 +60,13 @@ class openondemand::install {
     ensure => 'directory',
   }
 
+  openondemand::install::component { 'ood-portal-generator':
+    ensure         => $openondemand::_ood_portal_generator_ensure,
+    revision       => $openondemand::ood_portal_generator_revision,
+    path           => '/opt/ood/ood-portal-generator',
+    install_method => 'none',
+  }
+
   openondemand::install::component { 'mod_ood_proxy':
     ensure   => $openondemand::_mod_ood_proxy_ensure,
     revision => $openondemand::mod_ood_proxy_revision,

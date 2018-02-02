@@ -133,6 +133,18 @@ app_root:
 #  dev: '^/dev/(?<name>[-\w.]+)'
 #  usr: '^/usr/(?<owner>[\w]+)\/(?<name>[-\w.]+)'
 #  sys: '^/sys/(?<name>[-\w.]+)'
+<%- if scope['openondemand::nginx_stage_app_request_regex'] -%>
+app_request_regex:
+  <%- if scope['openondemand::nginx_stage_app_request_regex']['dev'] -%>
+  dev: '<%= scope['openondemand::nginx_stage_app_request_regex']['dev'] %>'
+  <%- end -%>
+  <%- if scope['openondemand::nginx_stage_app_request_regex']['usr'] -%>
+  usr: '<%= scope['openondemand::nginx_stage_app_request_regex']['usr'] %>'
+  <%- end -%>
+  <%- if scope['openondemand::nginx_stage_app_request_regex']['sys'] -%>
+  sys: '<%= scope['openondemand::nginx_stage_app_request_regex']['sys'] %>'
+  <%- end -%>
+<%- end -%>
 
 # A hash detailing the tokens used to identify individual apps
 #

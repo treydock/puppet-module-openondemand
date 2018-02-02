@@ -73,8 +73,9 @@ class openondemand (
 
   Hash $basic_auth_users  = $openondemand::params::basic_auth_users,
 
-  Hash $nginx_stage_app_root  = $openondemand::params::nginx_stage_app_root,
+  Openondemand::Nginx_stage_namespace_config $nginx_stage_app_root  = $openondemand::params::nginx_stage_app_root,
   String $nginx_stage_scl_env = 'nginx16 rh-passenger40 rh-ruby22 nodejs010 git19',
+  Optional[Openondemand::Nginx_stage_namespace_config] $nginx_stage_app_request_regex = undef,
 
   Hash $clusters = {},
   Boolean $clusters_hiera_hash = true,

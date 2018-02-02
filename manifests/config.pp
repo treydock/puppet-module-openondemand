@@ -19,8 +19,11 @@ class openondemand::config {
   }
 
   if $openondemand::apps_config_target {
-    $apps_config_ensure = 'link'
-    $apps_config_source = undef
+    file { '/etc/ood/config/apps':
+      ensure => 'link',
+      target => $openondemand::apps_config_target,
+      force  => true,
+    }
   } elsif $openondemand::manage_apps_config and $openondemand::apps_config_repo {
     vcsrepo { '/opt/ood-apps-config':
       ensure   => 'latest',
@@ -30,22 +33,25 @@ class openondemand::config {
       user     => 'root',
       before   => File['/etc/ood/config/apps'],
     }
-    $apps_config_ensure = 'directory'
-    $apps_config_source = "/opt/ood-apps-config/${openondemand::apps_config_repo_path}"
+    file { '/etc/ood/config/apps':
+      ensure  => 'directory',
+      owner   => 'root',
+      group   => 'root',
+      source  => "/opt/ood-apps-config/${openondemand::apps_config_repo_path}",
+      recurse => true,
+      purge   => true,
+      force   => true,
+    }
   } else {
-    $apps_config_ensure = 'directory'
-    $apps_config_source = $openondemand::apps_config_source
-  }
-
-  file { '/etc/ood/config/apps':
-    ensure  => $apps_config_ensure,
-    target  => $openondemand::apps_config_target,
-    owner   => 'root',
-    group   => 'root',
-    source  => $apps_config_source,
-    recurse => true,
-    purge   => true,
-    force   => true,
+    file { '/etc/ood/config/apps':
+      ensure  => 'directory',
+      owner   => 'root',
+      group   => 'root',
+      source  => $openondemand::apps_config_source,
+      recurse => true,
+      purge   => true,
+      force   => true,
+    }
   }
 
   file { '/etc/ood/config/clusters.d':

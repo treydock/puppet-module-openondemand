@@ -20,7 +20,7 @@ class openondemand::params ($auth_type = 'basic'){
 
   case $::osfamily {
     'RedHat': {
-      if $::operatingsystemmajrelease == '6' {
+      if versioncmp($::operatingsystemrelease, '6.0') >= 0 {
         $package_dependencies = [
           'sqlite-devel'
         ]
@@ -54,7 +54,7 @@ class openondemand::params ($auth_type = 'basic'){
           'git19-git',
         ]
       } else {
-        fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 for osfamily RedHat") # lint:ignore:140chars
+        fail("Unsupported operatingsystemmajrelease ${::operatingsystemmajrelease}, module ${module_name} only supports 6 or 7 for osfamily RedHat") # lint:ignore:140chars
       }
     }
 

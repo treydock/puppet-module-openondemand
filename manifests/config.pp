@@ -54,6 +54,20 @@ class openondemand::config {
     }
   }
 
+  if ! $openondemand::develop_root_dir and $openondemand::apps_config_repo and $openondemand::public_files_repo_paths {
+    $openondemand::public_files_repo_paths.each |$path| {
+      $basename = basename($path)
+      file { "${openondemand::public_root}/${basename}":
+        ensure  => 'file',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        source  => "/opt/ood-apps-config/${path}",
+        require => Vcsrepo['/opt/ood-apps-config'],
+      }
+    }
+  }
+
   file { '/etc/ood/config/clusters.d':
     ensure  => 'directory',
     owner   => 'root',

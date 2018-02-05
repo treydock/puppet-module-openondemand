@@ -47,10 +47,13 @@ class openondemand::install {
   }
 
   file { "${openondemand::_web_directory}/apps/usr":
-    ensure => 'directory',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    recurse => true,
+    purge   => true,
+    force   => true,
   }
 
   file { '/opt/ood':

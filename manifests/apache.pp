@@ -8,7 +8,7 @@ class openondemand::apache {
     class { '::apache':
       default_vhost  => false,
       apache_name    => 'httpd24',
-      dev_packages   => ['httpd24-httpd-devel', 'httpd24-apr-devel'],
+      dev_packages   => $openondemand::params::apache_dev_packages,
       service_name   => 'httpd24-httpd',
       apache_version => '2.4',
       httpd_dir      => '/opt/rh/httpd24/root/etc/httpd',

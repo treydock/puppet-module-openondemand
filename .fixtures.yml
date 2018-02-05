@@ -19,5 +19,9 @@ fixtures:
 #      repo: https://github.com/voxpupuli/puppet-filemapper
     httpauth:
       repo: https://github.com/jamtur01/jamtur01-httpauth.git
+    augeasproviders_core:
+      repo: git://github.com/hercules-team/augeasproviders_core.git
+    augeasproviders_shellvar:
+      repo: git://github.com/hercules-team/augeasproviders_shellvar.git
   symlinks:
     openondemand: "#{source_dir}"

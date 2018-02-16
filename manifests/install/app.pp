@@ -1,7 +1,7 @@
 #
 define openondemand::install::app (
   String $ensure = 'present',
-  String $package = $name,
+  String $package = "ondemand-${name}",
   Boolean $manage_package = true,
   Optional[Stdlib::Absolutepath] $path = undef,
   String $owner = 'root',

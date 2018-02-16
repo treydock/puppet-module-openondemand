@@ -95,7 +95,7 @@ class openondemand::config {
 
   ::apache::custom_config { 'ood-portal':
     source         => '/etc/ood/config/ood-portal.conf',
-    priority       => '10',
+    filename       => 'ood-portal.conf',
     verify_command => '/opt/rh/httpd24/root/usr/sbin/apachectl -t',
   }
 
@@ -138,7 +138,8 @@ class openondemand::config {
   }
 
   sudo::conf { 'ood':
-    content => template('openondemand/sudo.erb')
+    content        => template('openondemand/sudo.erb'),
+    sudo_file_name => 'ood',
   }
 
   file { '/etc/cron.d/ood':

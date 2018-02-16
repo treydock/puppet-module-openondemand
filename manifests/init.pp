@@ -1,23 +1,15 @@
 # See README.md for more details.
 class openondemand (
-  Array $package_dependencies                     = $openondemand::params::package_dependencies,
-  Array $scl_packages                             = $openondemand::params::scl_packages,
-  String $packages_ensure                         = 'present',
-  Optional[String] $ood_portal_generator_ensure   = undef,
-  String $ood_portal_generator_revision           = 'master',
-  Optional[String] $mod_ood_proxy_ensure          = undef,
-  String $mod_ood_proxy_revision                  = 'master',
-  Optional[String] $nginx_stage_ensure            = undef,
-  String $nginx_stage_revision                    = 'master',
-  Optional[String] $ood_auth_map_ensure           = undef,
-  String $ood_auth_map_revision                   = 'master',
-  Optional[String] $ood_auth_discovery_ensure     = undef,
-  String $ood_auth_discovery_revision             = 'master',
-  Optional[String] $ood_auth_registration_ensure  = undef,
-  String $ood_auth_registration_revision          = 'master',
-  Boolean $manage_app_installer                   = true,
-  Optional[String] $app_installer_ensure          = undef,
-  String $app_installer_revision                  = 'master',
+  String $repo_release = 'latest',
+  Variant[Stdlib::HTTPSUrl, Stdlib::HTTPUrl]
+    $repo_baseurl_prefix = 'https://yum.osc.edu/ondemand',
+  Variant[Stdlib::HTTPSUrl, Stdlib::HTTPUrl, Stdlib::Absolutepath]
+    $repo_gpgkey = 'https://yum.osc.edu/ondemand/RPM-GPG-KEY-ondemand',
+
+  String $ondemand_package_ensure                 = 'present',
+  String $ood_auth_discovery_ensure               = 'present',
+  String $ood_auth_registration_ensure            = 'present',
+  Hash $install_apps                              = {},
 
   # Apache
   Boolean $declare_apache = true,
@@ -80,12 +72,6 @@ class openondemand (
   Hash $clusters = {},
   Boolean $clusters_hiera_hash = true,
 
-  # Used by openondemand::app::installer
-  Optional[String] $default_sshhost = undef,
-  Optional[String] $bc_desktop_ood_site = undef,
-  Boolean $install_bc_desktop = false,
-  Optional[Hash] $dashboard_config = undef,
-
   Optional[String] $develop_root_dir = undef,
   Variant[Array, Hash] $usr_apps  = {},
   Hash $usr_app_defaults = {},
@@ -100,14 +86,6 @@ class openondemand (
 ) inherits openondemand::params {
 
   $_web_directory = dirname($public_root)
-
-  $_ood_portal_generator_ensure   = pick($ood_portal_generator_ensure, $packages_ensure)
-  $_mod_ood_proxy_ensure          = pick($mod_ood_proxy_ensure, $packages_ensure)
-  $_nginx_stage_ensure            = pick($nginx_stage_ensure, $packages_ensure)
-  $_ood_auth_map_ensure           = pick($ood_auth_map_ensure, $packages_ensure)
-  $_ood_auth_discovery_ensure     = pick($ood_auth_discovery_ensure, $packages_ensure)
-  $_ood_auth_registration_ensure  = pick($ood_auth_registration_ensure, $packages_ensure)
-  $_app_installer_ensure          = pick($app_installer_ensure, $packages_ensure)
 
   if $ssl {
     $port = '443'
@@ -137,18 +115,6 @@ class openondemand (
     $_clusters = lookup('openondemand::clusters', Hash, 'deep', {})
   } else {
     $_clusters = $clusters
-  }
-
-  if $default_sshhost {
-    $default_sshhost_env = "DEFAULT_SSHHOST=${default_sshhost}"
-  } else {
-    $default_sshhost_env = undef
-  }
-
-  if $bc_desktop_ood_site {
-    $bc_desktop_ood_site_env = "OOD_SITE=${bc_desktop_ood_site}"
-  } else {
-    $bc_desktop_ood_site_env = undef
   }
 
   if $develop_root_dir {
@@ -202,19 +168,17 @@ class openondemand (
     'register_root'       => $register_root,
   })
 
-  include openondemand::install
-  include openondemand::apps
-  include openondemand::apache
-  include openondemand::config
-  include openondemand::service
+  contain openondemand::repo
+  contain openondemand::install
+  contain openondemand::apache
+  contain openondemand::config
+  contain openondemand::service
 
-  anchor { 'openondemand::start': }
+  Class['openondemand::repo']
   ->Class['openondemand::install']
-  ->Class['openondemand::apps']
   ->Class['openondemand::apache']
   ->Class['openondemand::config']
   ->Class['openondemand::service']
-  ->anchor { 'openondemand::end': }
 
   create_resources('openondemand::cluster', $_clusters)
 
@@ -224,6 +188,11 @@ class openondemand (
     create_resources('openondemand::app::usr', $usr_apps, $usr_app_defaults)
   } else {
     fail("${module_name}: usr_apps must be an array or hash.")
+  }
+
+  if ! $_develop_mode {
+    $apps = deep_merge($openondemand::params::base_apps, $install_apps)
+    create_resources('openondemand::install::app', $apps)
   }
 
 }

@@ -4,13 +4,6 @@ class openondemand::install {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
-  $openondemand::package_dependencies.each |$package| {
-    if ! defined(Package[$package]) {
-      package { $package: ensure => 'present' }
-    }
-  }
-  ensure_packages($openondemand::scl_packages)
-
   # Assumes /var/www - must create since httpd24 does not
   $_web_directory_parent = dirname($openondemand::_web_directory)
   if ! defined(File[$_web_directory_parent]) {
@@ -63,26 +56,10 @@ class openondemand::install {
     ensure => 'directory',
   }
 
-  openondemand::install::component { 'ood-portal-generator':
-    ensure         => $openondemand::_ood_portal_generator_ensure,
-    revision       => $openondemand::ood_portal_generator_revision,
-    path           => '/opt/ood/ood-portal-generator',
-    install_method => 'none',
-  }
-
-  openondemand::install::component { 'mod_ood_proxy':
-    ensure   => $openondemand::_mod_ood_proxy_ensure,
-    revision => $openondemand::mod_ood_proxy_revision,
-  }
-
-  openondemand::install::component { 'nginx_stage':
-    ensure   => $openondemand::_nginx_stage_ensure,
-    revision => $openondemand::nginx_stage_revision,
-  }
-
-  openondemand::install::component { 'ood_auth_map':
-    ensure   => $openondemand::_ood_auth_map_ensure,
-    revision => $openondemand::ood_auth_map_revision,
+  if ! $openondemand::_develop_mode {
+    package { 'ondemand':
+      ensure => $openondemand::ondemand_package_ensure
+    }
   }
 
   if $openondemand::oidc_discover_uri {
@@ -92,11 +69,9 @@ class openondemand::install {
         target => $openondemand::_discover_target,
       }
     } else {
-      openondemand::install::component { 'ood_auth_discovery':
-        ensure         => $openondemand::_ood_auth_discovery_ensure,
-        path           => $openondemand::oidc_discover_root,
-        revision       => $openondemand::ood_auth_discovery_revision,
-        install_method => 'none',
+      package { 'ondemand-discover':
+        ensure  => $openondemand::ood_auth_discovery_ensure,
+        require => Package['ondemand'],
       }
     }
   }
@@ -108,11 +83,9 @@ class openondemand::install {
         target => $openondemand::_register_target,
       }
     } else {
-      openondemand::install::component { 'ood_auth_registration':
-        ensure         => $openondemand::_ood_auth_registration_ensure,
-        path           => $openondemand::register_root,
-        revision       => $openondemand::ood_auth_registration_revision,
-        install_method => 'none',
+      package { 'ondemand-register':
+        ensure  => $openondemand::ood_auth_registration_ensure,
+        require => Package['ondemand'],
       }
     }
   }

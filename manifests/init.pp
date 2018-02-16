@@ -9,6 +9,7 @@ class openondemand (
   String $ondemand_package_ensure                 = 'present',
   String $ood_auth_discovery_ensure               = 'present',
   String $ood_auth_registration_ensure            = 'present',
+  String $mod_auth_openidc_ensure                 = 'present',
   Hash $install_apps                              = {},
 
   # Apache

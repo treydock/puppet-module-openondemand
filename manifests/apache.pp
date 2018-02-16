@@ -80,8 +80,10 @@ class openondemand::apache {
   include ::apache::mod::headers
 
   if $openondemand::auth_type in ['cilogon', 'openid-connect'] {
-    # TODO: How to handle installing this module?
-    ::apache::mod { 'auth_openidc': }
+    ::apache::mod { 'auth_openidc':
+      package        => 'httpd24-mod_auth_openidc',
+      package_ensure => $openondemand::mod_auth_openidc_ensure,
+    }
 
     file { '/opt/rh/httpd24/root/etc/httpd/metadata':
       ensure  => 'directory',

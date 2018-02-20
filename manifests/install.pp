@@ -60,6 +60,7 @@ class openondemand::install {
     package { 'ondemand':
       ensure => $openondemand::ondemand_package_ensure
     }
+    Package['ondemand'] ~> Exec['ood-portal-generator-generate']
   }
 
   if $openondemand::oidc_discover_uri {

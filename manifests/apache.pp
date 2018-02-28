@@ -161,6 +161,20 @@ class openondemand::apache {
     notify  => Class['Apache::Service'],
   }
 
+  if $::service_provider == 'systemd' {
+    systemd::dropin_file { 'ood.conf':
+      unit    => "${::apache::service_name}.service",
+      content => join([
+        '[Service]',
+        'KillSignal=SIGTERM',
+        'KillMode=process',
+        'PrivateTmp=false',
+      ], "\n"),
+      notify  => Class['::apache::service'],
+    }
+    Class['systemd::systemctl::daemon_reload'] -> Class['::apache::service']
+  }
+
   if $openondemand::auth_type == 'basic' {
     $_basic_auth_users_defaults = {
       'ensure'    => 'present',

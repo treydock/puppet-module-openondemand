@@ -1,10 +1,6 @@
 # Private class.
 class openondemand::params ($auth_type = 'basic'){
 
-  $nginx_stage_ondemand_portal = 'ondemand'
-
-  $nginx_stage_ondemand_title = 'Open OnDemand'
-
   $nginx_stage_app_root = {
     'dev' => '~%{owner}/%{portal}/dev/%{name}',
     'usr' => '/var/www/ood/apps/usr/%{owner}/gateway/%{name}',

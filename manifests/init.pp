@@ -66,8 +66,8 @@ class openondemand (
 
   Hash $basic_auth_users  = $openondemand::params::basic_auth_users,
 
-  Openondemand::Nginx_stage_namespace_config $nginx_stage_ondemand_portal = $openondemand::params::nginx_stage_ondemand_portal,
-  Openondemand::Nginx_stage_namespace_config $nginx_stage_ondemand_title  = $openondemand::params::nginx_stage_ondemand_title,
+  String $nginx_stage_ondemand_portal = 'ondemand',
+  String $nginx_stage_ondemand_title  = 'Open OnDemand',
   Openondemand::Nginx_stage_namespace_config $nginx_stage_app_root  = $openondemand::params::nginx_stage_app_root,
   String $nginx_stage_scl_env = 'nginx16 rh-passenger40 rh-ruby22 nodejs010 git19',
   Optional[Openondemand::Nginx_stage_namespace_config] $nginx_stage_app_request_regex = undef,

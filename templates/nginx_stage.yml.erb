@@ -14,6 +14,22 @@
 
 ---
 
+# Path to the OnDemand version file
+#
+#ondemand_version_path: '/opt/ood/VERSION'
+
+# Unique name of this OnDemand portal used to namespace multiple hosted portals
+# NB: If this is not set then most apps will use default namespace "ondemand"
+#
+#ondemand_portal: null
+ondemand_portal: '<%= scope['openondemand::nginx_stage_ondemand_portal'] -%>'
+
+# Title of this OnDemand portal that apps *should* display in their navbar
+# NB: If this is not set then most apps will use default title "Open OnDemand"
+#
+#ondemand_title: null
+ondemand_title: '<%= scope['openondemand::nginx_stage_ondemand_title'] -%>'
+
 # Location of the ERB templates used in the generation of the NGINX configs
 #
 #template_root: '/opt/ood/nginx_stage/templates'

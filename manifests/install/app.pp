@@ -20,12 +20,14 @@ define openondemand::install::app (
     })
   }
 
-  file { $_path:
-    ensure  => 'directory',
-    owner   => $owner,
-    group   => $group,
-    mode    => $mode,
-    require => Package[$package],
+  if $ensure != 'absent' {
+    file { $_path:
+      ensure  => 'directory',
+      owner   => $owner,
+      group   => $group,
+      mode    => $mode,
+      require => Package[$package],
+    }
   }
 
 }

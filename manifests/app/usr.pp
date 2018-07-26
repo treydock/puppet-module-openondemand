@@ -39,6 +39,7 @@ define openondemand::app::usr (
     }
     file { $web_dir:
       ensure => 'absent',
+      force  => true,
     }
   }
 

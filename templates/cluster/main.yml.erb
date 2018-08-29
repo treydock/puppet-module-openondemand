@@ -1,88 +1,4 @@
 ---
-v1:
-  title: "<%= @cluster_title %>"
-  url: "<%= @url %>"
-<% if ! @acls.empty? || ! @rsv_query_acls.empty? -%>
-  validators:
-  <%- if ! @acls.empty? -%>
-    cluster:
-    <%- @acls.each do |acl| -%>
-      - type: "OodAppkit::Validators::Groups"
-        data:
-          groups:
-          <%- acl['groups'].each do |g| -%>
-            - "<%= g %>"
-          <%- end -%>
-          allow: <%= acl['type'] == 'whitelist' ? true : false %>
-    <%- end -%>
-  <%- end -%>
-  <%- if ! @rsv_query_acls.empty? -%>
-    rsv_query:
-    <%- @rsv_query_acls.each do |rsv_query_acl| -%>
-      - type: "OodAppkit::Validators::Groups"
-        data:
-          groups:
-          <%- rsv_query_acl['groups'].each do |g| -%>
-            - "<%= g %>"
-          <%- end -%>
-          allow: <%= rsv_query_acl['type'] == 'whitelist' ? true : false %>
-    <%- end -%>
-  <%- end -%>
-<% end -%>
-<%- if @login_server || @resource_mgr_host || @scheduler_host || @ganglia_host -%>
-  cluster:
-    type: "OodCluster::Cluster"
-    data:
-      hpc_cluster: <%= @hpc_cluster %>
-      servers:
-  <%- if @login_server -%>
-        login:
-          type: "OodCluster::Servers::Ssh"
-          data:
-            host: "<%= @login_server %>"
-  <%- end -%>
-  <%- if @resource_mgr_host -%>
-        resource_mgr:
-          type: "<%= @_resource_mgr_type %>"
-          data:
-            host: "<%= @resource_mgr_host %>"
-            lib: "<%= @resource_mgr_lib %>"
-            bin: "<%= @resource_mgr_bin %>"
-            version: "<%= @resource_mgr_version %>"
-  <%- end -%>
-  <%- if @scheduler_host -%>
-        scheduler:
-          type: "<%= @_scheduler_type %>"
-          data:
-            host: "<%= @scheduler_host %>"
-            bin: "<%= @scheduler_bin %>"
-            version: "<%= @scheduler_version %>"
-          <%- @scheduler_params.keys.sort.each do |scheduler_param| -%>
-            <%= scheduler_param %>: "<%= @scheduler_params[scheduler_param] %>"
-          <%- end -%>
-  <%- end -%>
-  <%- if @ganglia_host -%>
-        ganglia:
-          type: "OodCluster::Servers::Ganglia"
-          data:
-            host: "<%= @ganglia_host %>"
-            scheme: "<%= @ganglia_scheme %>"
-            segments:
-            <%- @ganglia_segments.each do |ganglia_segment| -%>
-              - "<%= ganglia_segment %>"
-            <%- end -%>
-            req_query:
-            <%- @ganglia_req_query.keys.sort.each do |r| -%>
-              <%= r %>: "<%= @ganglia_req_query[r] %>"
-            <%- end -%>
-            opt_query:
-            <%- @ganglia_opt_query.keys.sort.each do |o| -%>
-              <%= o %>: "<%= @ganglia_opt_query[o] %>"
-            <%- end -%>
-            version: "<%= @ganglia_version %>"
-  <%- end -%>
-<%- end -%>
-
 v2:
   metadata:
     title: "<%= @cluster_title %>"
@@ -172,7 +88,7 @@ v2:
       version: "<%= @ganglia_version %>"
   <%- end -%>
 <% end -%>
-<% if @batch_connect -%>
+<% if ! @batch_connect.empty? -%>
   batch_connect:
     <%- @batch_connect.each do |script_type, options| -%>
       <%= script_type %>:

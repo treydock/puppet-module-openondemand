@@ -35,7 +35,7 @@ define openondemand::app::usr (
       path    => '/usr/bin:/bin:/usr/sbin:/sbin',
       command => "unlink ${gateway}",
       onlyif  => "test -L ${gateway}",
-      before => File[$web_dir]
+      before  => File[$web_dir]
     }
     file { $web_dir:
       ensure => 'absent',

@@ -21,3 +21,11 @@ at_exit { RSpec::Puppet::Coverage.report! }
 
 add_custom_fact :concat_basedir, '/dne'
 add_custom_fact :sudoversion, '1.8.6p3', :confine => 'redhat-6-x86_64'
+add_custom_fact :service_provider, ->(os, facts) {
+  case facts[:operatingsystemmajrelease]
+  when '6'
+    'redhat'
+  else
+    'systemd'
+  end
+}

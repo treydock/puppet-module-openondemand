@@ -5,6 +5,7 @@ define openondemand::app::usr (
   $owner = 'root',
   $group = 'root',
   $home_subdir = 'ood/share',
+  $gateway_src = undef,
 ) {
 
   include openondemand
@@ -12,7 +13,7 @@ define openondemand::app::usr (
   $base_web_dir = "${openondemand::_web_directory}/apps/usr"
   $web_dir      = "${base_web_dir}/${name}"
   $gateway      = "${web_dir}/gateway"
-  $gateway_src  = "~${name}/${home_subdir}"
+  $gateway_src  = pick($gateway_src, "~${name}/${home_subdir}")
 
   if $ensure == 'present' {
     file { $web_dir:

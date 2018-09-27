@@ -21,21 +21,16 @@ define openondemand::app::usr (
       mode   => $mode,
     }
 
-    exec { "openondemand::app::usr-link-gateway-${name}":
-      path    => '/usr/bin:/bin:/usr/sbin:/sbin',
-      command => "ln -s ${gateway_src} ${gateway}",
-      unless  => "test -L ${gateway}",
-      require => File[$web_dir]
+    file { $gateway:
+      ensure => 'link',
+      target => $gateway_src
     }
   }
 
   if $ensure == 'absent' {
-    exec { "openondemand::app::usr-unlink-gateway-${name}":
-      path    => '/usr/bin:/bin:/usr/sbin:/sbin',
-      command => "unlink ${gateway}",
-      onlyif  => "test -L ${gateway}",
-      before  => File[$web_dir]
-    }
+    file { $gateway:
+      ensure => 'absent'
+    } ->
     file { $web_dir:
       ensure => 'absent',
       force  => true,

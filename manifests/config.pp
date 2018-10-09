@@ -149,4 +149,14 @@ class openondemand::config {
     mode    => '0644',
     content => template('openondemand/ood-cron.erb'),
   }
+
+  logrotate::rule { 'ood':
+    path         => ['/var/log/nginx/*/access.log', '/var/log/nginx/*/error.log'],
+    compress     => true,
+    missingok    => true,
+    copytruncate => true,
+    ifempty      => false,
+    rotate       => 52,
+    rotate_every => 'week',
+  }
 }

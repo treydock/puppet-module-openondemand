@@ -78,6 +78,9 @@ class openondemand (
   Optional[String] $develop_root_dir = undef,
   Variant[Array, Hash] $usr_apps  = {},
   Hash $usr_app_defaults = {},
+  Hash $dev_apps = {},
+  Array $dev_app_users = [],
+  Hash $dev_app_defaults = {},
 
   Boolean $manage_apps_config = true,
   Optional[String] $apps_config_repo = undef,
@@ -191,6 +194,13 @@ class openondemand (
     create_resources('openondemand::app::usr', $usr_apps, $usr_app_defaults)
   } else {
     fail("${module_name}: usr_apps must be an array or hash.")
+  }
+
+  create_resources('openondemand::app::dev', $dev_apps, $dev_app_defaults)
+  $dev_app_users.each |$user| {
+    openondemand::app::dev { $user:
+      * => $dev_app_defaults,
+    }
   }
 
   if ! $_develop_mode {

@@ -49,6 +49,16 @@ class openondemand::install {
     force   => true,
   }
 
+  file { "${openondemand::_web_directory}/apps/dev":
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    recurse => true,
+    purge   => true,
+    force   => true,
+  }
+
   file { '/opt/ood':
     ensure => 'directory',
   }

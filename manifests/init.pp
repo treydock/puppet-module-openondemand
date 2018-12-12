@@ -51,6 +51,8 @@ class openondemand (
   String $pun_socket_root = '/var/run/nginx',
   Integer $pun_max_retries = 5,
 
+  String $nginx_log_group = 'nginx',
+
   Optional[String] $oidc_uri = undef,
   Optional[String] $oidc_discover_uri = undef,
   Optional[String] $oidc_discover_root = undef,

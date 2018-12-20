@@ -163,7 +163,7 @@ class openondemand::config {
   file { '/var/log/nginx':
     ensure => 'directory',
     mode   => '0750',
-    group  => $nginx_log_group,
+    group  => $openondemand::nginx_log_group,
   }
 
 }

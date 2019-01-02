@@ -75,6 +75,7 @@ class openondemand::config {
     mode    => '0755',
     purge   => true,
     recurse => true,
+    notify  => Class['openondemand::service'],
   }
 
   $ood_portal_yaml = to_yaml($openondemand::ood_portal_config)

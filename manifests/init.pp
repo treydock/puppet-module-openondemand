@@ -48,10 +48,10 @@ class openondemand (
 
   String $nginx_uri = '/nginx',
   String $pun_uri = '/pun',
-  String $pun_socket_root = '/var/run/nginx',
+  String $pun_socket_root = '/var/run/ondemand-nginx',
   Integer $pun_max_retries = 5,
 
-  String $nginx_log_group = 'nginx',
+  String $nginx_log_group = 'ondemand-nginx',
 
   Optional[String] $oidc_uri = undef,
   Optional[String] $oidc_discover_uri = undef,
@@ -71,7 +71,7 @@ class openondemand (
   String $nginx_stage_ondemand_portal = 'ondemand',
   String $nginx_stage_ondemand_title  = 'Open OnDemand',
   Openondemand::Nginx_stage_namespace_config $nginx_stage_app_root  = $openondemand::params::nginx_stage_app_root,
-  String $nginx_stage_scl_env = 'rh-ruby24 rh-nodejs6 rh-git29',
+  String $nginx_stage_scl_env = 'ondemand',
   Optional[Openondemand::Nginx_stage_namespace_config] $nginx_stage_app_request_regex = undef,
 
   Hash $clusters = {},

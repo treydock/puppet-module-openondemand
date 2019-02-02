@@ -156,7 +156,7 @@ class openondemand::apache {
   shellvar { 'HTTPD24_HTTPD_SCLS_ENABLED':
     ensure  => 'present',
     target  => '/opt/rh/httpd24/service-environment',
-    value   => 'httpd24 ondemand',
+    value   => 'httpd24',
     require => Package['httpd'],
     notify  => Class['Apache::Service'],
   }

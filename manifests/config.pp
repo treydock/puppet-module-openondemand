@@ -152,7 +152,7 @@ class openondemand::config {
   }
 
   logrotate::rule { 'ood':
-    path         => ['/var/log/nginx/*/access.log', '/var/log/nginx/*/error.log'],
+    path         => ['/var/log/ondemand-nginx/*/access.log', '/var/log/ondemand-nginx/*/error.log'],
     compress     => true,
     missingok    => true,
     copytruncate => true,
@@ -161,7 +161,7 @@ class openondemand::config {
     rotate_every => 'week',
   }
 
-  file { '/var/log/nginx':
+  file { '/var/log/ondemand-nginx':
     ensure => 'directory',
     mode   => '0750',
     group  => $openondemand::nginx_log_group,

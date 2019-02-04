@@ -88,6 +88,7 @@ class openondemand (
   Optional[String] $apps_config_repo = undef,
   Optional[String] $apps_config_revision = undef,
   String $apps_config_repo_path = '',
+  String $locales_config_repo_path = '',
   Optional[String] $apps_config_source = undef,
   Optional[Stdlib::Absolutepath] $apps_config_target = undef,
   Optional[Array] $public_files_repo_paths = undef,

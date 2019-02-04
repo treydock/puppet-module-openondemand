@@ -42,6 +42,17 @@ class openondemand::config {
       purge   => true,
       force   => true,
     }
+    if $openondemand::locales_config_repo_path != '' {
+      file { '/etc/ood/config/locales':
+        ensure  => 'directory',
+        owner   => 'root',
+        group   => 'root',
+        source  => "/opt/ood-apps-config/${openondemand::locales_config_repo_path}",
+        recurse => true,
+        purge   => true,
+        force   => true,
+      }
+    }
   } else {
     file { '/etc/ood/config/apps':
       ensure  => 'directory',

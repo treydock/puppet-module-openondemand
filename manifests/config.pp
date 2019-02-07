@@ -51,6 +51,7 @@ class openondemand::config {
         recurse => true,
         purge   => true,
         force   => true,
+        require => Vcsrepo['/opt/ood-apps-config'],
       }
     }
   } else {

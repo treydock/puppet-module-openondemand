@@ -5,7 +5,6 @@ fixtures:
       ref: 4.20.0
     concat:
       repo: https://github.com/puppetlabs/puppetlabs-concat.git
-      ref: 2.2.1
     vcsrepo:
       repo: https://github.com/puppetlabs/puppetlabs-vcsrepo.git
     apache:
@@ -13,10 +12,6 @@ fixtures:
       ref: 1.11.0
     sudo:
       repo: https://github.com/saz/puppet-sudo.git
-#    yamlfile:
-#      repo: https://github.com/reidmv/puppet-module-yamlfile.git
-#    filemapper:
-#      repo: https://github.com/voxpupuli/puppet-filemapper
     httpauth:
       repo: https://github.com/jamtur01/jamtur01-httpauth.git
     augeasproviders_core:
